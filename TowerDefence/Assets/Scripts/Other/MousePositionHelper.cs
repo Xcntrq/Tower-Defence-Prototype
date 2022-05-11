@@ -4,7 +4,7 @@ namespace nsMousePositionHelper
 {
     public class MousePositionHelper
     {
-        private Camera _camera;
+        private readonly Camera _camera;
 
         public Vector3 MouseWorldPosition
         {
