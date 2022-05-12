@@ -20,5 +20,20 @@ namespace nsResourceStorage
                 _resourceAmounts[resourceType] = 0;
             }
         }
+
+        public void AddResource(ResourceType resourceType, int amount)
+        {
+            _resourceAmounts[resourceType] += amount;
+            LogAmounts();
+        }
+
+        private void LogAmounts()
+        {
+            foreach (ResourceType resourceType in _resourceTypes.List)
+            {
+                string line = string.Concat(resourceType.name, ": ", _resourceAmounts[resourceType]);
+                Debug.Log(line);
+            }
+        }
     }
 }
