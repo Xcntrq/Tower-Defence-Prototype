@@ -1,5 +1,6 @@
 using nsResourceType;
 using nsResourceTypes;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,29 +12,34 @@ namespace nsResourceStorage
 
         private Dictionary<ResourceType, int> _resourceAmounts;
 
+        public Action<ResourceType, int> OnAmountChanged;
+
         private void Awake()
         {
             _resourceAmounts = new Dictionary<ResourceType, int>();
+        }
 
+        private void Start()
+        {
             foreach (ResourceType resourceType in _resourceTypes.List)
             {
                 _resourceAmounts[resourceType] = 0;
+
+                //The subscribers need to have passed their OnEnable callbacks for this line
+                //Which is why this is in Start and not in Awake
+                OnAmountChanged?.Invoke(resourceType, _resourceAmounts[resourceType]);
             }
         }
 
         public void AddResource(ResourceType resourceType, int amount)
         {
             _resourceAmounts[resourceType] += amount;
-            LogAmounts();
+            OnAmountChanged?.Invoke(resourceType, _resourceAmounts[resourceType]);
         }
 
-        private void LogAmounts()
-        {
-            foreach (ResourceType resourceType in _resourceTypes.List)
-            {
-                string line = string.Concat(resourceType.name, ": ", _resourceAmounts[resourceType]);
-                Debug.Log(line);
-            }
-        }
+        //public int GetResourceAmount(ResourceType resourceType)
+        //{
+        //    return _resourceAmounts[resourceType];
+        //}
     }
 }
