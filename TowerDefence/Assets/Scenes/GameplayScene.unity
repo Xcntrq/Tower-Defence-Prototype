@@ -316,6 +316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _buildingTypes: {fileID: 11400000, guid: 0eedc7399b3d24d4b80685a19d8e02a0, type: 2}
+  _resourceStorage: {fileID: 848697337}
 --- !u!4 &972399361
 Transform:
   m_ObjectHideFlags: 0
