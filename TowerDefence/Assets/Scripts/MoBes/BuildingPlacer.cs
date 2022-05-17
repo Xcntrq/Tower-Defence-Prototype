@@ -59,14 +59,10 @@ namespace nsBuildingPlacer
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            foreach (BuildingType buildingType in _buildingTypes.List)
             {
-                CurrentBuildingType = _buildingTypes.List[0];
-            }
-
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                CurrentBuildingType = _buildingTypes.List[1];
+                bool isKeyPressed = Input.GetKeyDown(buildingType.KeyCode);
+                if (isKeyPressed) CurrentBuildingType = buildingType;
             }
 
             if (Input.GetKeyDown(KeyCode.Escape) || isRMBDown)
