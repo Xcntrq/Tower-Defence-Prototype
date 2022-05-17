@@ -18,12 +18,12 @@ namespace nsResourceDisplay
 
         private void OnEnable()
         {
-            _resourceStorage.OnAmountChanged += ResourceStorage_OnAmountChanged;
+            _resourceStorage.OnAmountChange += ResourceStorage_OnAmountChanged;
         }
 
         private void OnDisable()
         {
-            _resourceStorage.OnAmountChanged -= ResourceStorage_OnAmountChanged;
+            _resourceStorage.OnAmountChange -= ResourceStorage_OnAmountChanged;
         }
 
         private void Awake()
