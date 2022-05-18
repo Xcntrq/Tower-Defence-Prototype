@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _name: Gold Harvester
   _prefab: {fileID: 8251627430140896426, guid: 3633fdc624399fc4e854ec998c8cfc18, type: 3}
+  _sprite: {fileID: 21300000, guid: a02d934633803124a89456e505e55cac, type: 3}
   _keyCode: 51
   _resourceGeneratorData:
     _timeCost: 4

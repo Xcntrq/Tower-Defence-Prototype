@@ -56,7 +56,7 @@ namespace nsBuildingButtonsDisplay
             {
                 GameObject newItem = Instantiate(_pfItem, transform);
                 //The picture of a building on top of the button is also an image, but it has a LayoutElement component, that's how to find it
-                newItem.GetComponentInChildren<LayoutElement>().GetComponent<Image>().sprite = buildingType.Prefab.GetComponentInChildren<SpriteRenderer>().sprite;
+                newItem.GetComponentInChildren<LayoutElement>().GetComponent<Image>().sprite = buildingType.Sprite;
                 newItem.GetComponentInChildren<TextMeshProUGUI>().SetText(index++.ToString());
                 newItem.GetComponent<Button>().onClick.AddListener(() => { _buildingPlacer.CurrentBuildingType = buildingType; });
                 _items[buildingType] = newItem;
