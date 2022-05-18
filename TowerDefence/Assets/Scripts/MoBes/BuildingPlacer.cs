@@ -3,7 +3,9 @@ using nsBuildingTypes;
 using nsMousePositionHelper;
 using nsResourceGenerator;
 using nsResourceStorage;
+using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace nsBuildingPlacer
 {
@@ -15,21 +17,36 @@ namespace nsBuildingPlacer
         private MousePositionHelper _mousePositionHelper;
         private BuildingType _currentBuildingType;
 
-        private void Awake()
+        public BuildingType CurrentBuildingType
         {
-            _currentBuildingType = _buildingTypes.List[0];
+            get
+            {
+                return _currentBuildingType;
+            }
+            set
+            {
+                _currentBuildingType = _currentBuildingType == value ? null : value;
+                OnCurrentBuildingTypeChange?.Invoke(_currentBuildingType);
+            }
         }
+
+        public Action<BuildingType> OnCurrentBuildingTypeChange;
 
         private void Start()
         {
             _mousePositionHelper = new MousePositionHelper(Camera.main);
+            CurrentBuildingType = null;
         }
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            bool isLMBDown = Input.GetMouseButtonDown(0);
+            bool isRMBDown = Input.GetMouseButtonDown(1);
+            bool isPointerOverGameObject = EventSystem.current.IsPointerOverGameObject();
+
+            if (isLMBDown && !isPointerOverGameObject && (CurrentBuildingType != null))
             {
-                Transform newBuilding = Instantiate(_currentBuildingType.Prefab, _mousePositionHelper.MouseWorldPosition, Quaternion.identity);
+                Transform newBuilding = Instantiate(CurrentBuildingType.Prefab, _mousePositionHelper.MouseWorldPosition, Quaternion.identity);
                 newBuilding.parent = transform;
                 ResourceGenerator resourceGenerator = newBuilding.GetComponent<ResourceGenerator>();
                 if (resourceGenerator != null)
@@ -42,14 +59,15 @@ namespace nsBuildingPlacer
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            foreach (BuildingType buildingType in _buildingTypes.List)
             {
-                _currentBuildingType = _buildingTypes.List[0];
+                bool isKeyPressed = Input.GetKeyDown(buildingType.KeyCode);
+                if (isKeyPressed) CurrentBuildingType = buildingType;
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha2))
+            if (Input.GetKeyDown(KeyCode.Escape) || isRMBDown)
             {
-                _currentBuildingType = _buildingTypes.List[1];
+                CurrentBuildingType = null;
             }
         }
     }

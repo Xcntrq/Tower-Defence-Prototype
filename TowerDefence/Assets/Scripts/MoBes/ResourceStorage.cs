@@ -12,7 +12,7 @@ namespace nsResourceStorage
 
         private Dictionary<ResourceType, int> _resourceAmounts;
 
-        public Action<ResourceType, int> OnAmountChanged;
+        public Action<ResourceType, int> OnAmountChange;
 
         private void Awake()
         {
@@ -27,14 +27,14 @@ namespace nsResourceStorage
 
                 //The subscribers need to have passed their OnEnable callbacks for this line
                 //Which is why this is in Start and not in Awake
-                OnAmountChanged?.Invoke(resourceType, _resourceAmounts[resourceType]);
+                OnAmountChange?.Invoke(resourceType, _resourceAmounts[resourceType]);
             }
         }
 
         public void AddResource(ResourceType resourceType, int amount)
         {
             _resourceAmounts[resourceType] += amount;
-            OnAmountChanged?.Invoke(resourceType, _resourceAmounts[resourceType]);
+            OnAmountChange?.Invoke(resourceType, _resourceAmounts[resourceType]);
         }
 
         //public int GetResourceAmount(ResourceType resourceType)
