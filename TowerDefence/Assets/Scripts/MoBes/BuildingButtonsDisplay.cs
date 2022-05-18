@@ -39,11 +39,11 @@ namespace nsBuildingButtonsDisplay
             }
             if (buildingType == null)
             {
-                _lastItem.SetActive(false);
+                _lastItem.GetComponent<Button>().interactable = false;
             }
             else
             {
-                _lastItem.SetActive(true);
+                _lastItem.GetComponent<Button>().interactable = true;
                 _items[buildingType].GetComponent<Image>().sprite = _buttonPressedSprite;
             }
         }
