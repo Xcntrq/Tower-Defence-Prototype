@@ -17,5 +17,7 @@ MonoBehaviour:
   _sprite: {fileID: 21300000, guid: bfadcc08738a00b449e6f8ade164cd78, type: 3}
   _keyCode: 49
   _resourceGeneratorData:
+    _amountPerCycle: 5
     _timeCost: 1
+    _nodeDetectionRadius: 6
     _resourceType: {fileID: 11400000, guid: dc1f9caca0c54e548802e7666787e39c, type: 2}
