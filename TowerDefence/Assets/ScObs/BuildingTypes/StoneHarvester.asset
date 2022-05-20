@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: StoneHarvester
   m_EditorClassIdentifier: 
   _name: Stone Harvester
-  _prefab: {fileID: 8251627430140896426, guid: 227beabe69db6494e86504422e0e4b90, type: 3}
   _sprite: {fileID: 21300000, guid: c25489b850c213545963b5945e6bacfc, type: 3}
   _keyCode: 50
+  _resourceGenerator: {fileID: 8616325229268131667, guid: 4f9da2db84e3af04185501f6b1751226, type: 3}
   _resourceGeneratorData:
-    _amountPerCycle: 4
+    _amountPerCycle: 10
     _timeCost: 2
     _nodeDetectionRadius: 4
     _resourceType: {fileID: 11400000, guid: 788020552458df24a8ce9adc53a75f43, type: 2}

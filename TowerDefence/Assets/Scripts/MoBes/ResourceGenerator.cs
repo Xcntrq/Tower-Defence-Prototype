@@ -1,9 +1,8 @@
 using nsBuildingType;
 using nsNearbyResourceNodeFinder;
 using nsResourceGeneratorData;
-using nsResourceNode;
 using nsResourceStorage;
-using TMPro;
+using System;
 using UnityEngine;
 
 namespace nsResourceGenerator
@@ -20,11 +19,16 @@ namespace nsResourceGenerator
         private float _timeCost;
         private int _nearbyResourceNodeCount;
         private int _totalAmountPerCycle;
-        private string _text;
+        private bool _isInitialized;
+
+        public Action<int, int> OnOverlapCircleAll;
+        public Action<bool> OnSetTransparent;
+        public Action<bool, float> OnSetNodeDetectionCircleActive;
 
         public void Initialize(ResourceStorage resourceStorage)
         {
             _resourceStorage = resourceStorage;
+            _isInitialized = true;
         }
 
         private void Awake()
@@ -33,24 +37,36 @@ namespace nsResourceGenerator
             _resourceGeneratorData = _buildingType.ResourceGeneratorData;
             _timeCost = _resourceGeneratorData.TimeCost;
             _timeLeft = _timeCost;
+            _isInitialized = false;
         }
 
         private void Start()
         {
             _nearbyResourceNodeCount = _nearbyResourceNodeFinder.OverlapCircleAll(transform.position, _resourceGeneratorData.NodeDetectionRadius, _resourceGeneratorData.ResourceType);
             _totalAmountPerCycle = _nearbyResourceNodeCount * _resourceGeneratorData.AmountPerCycle;
-            _text = string.Concat('+', _totalAmountPerCycle, ' ', '(', _nearbyResourceNodeCount, ')');
-            GetComponentInChildren<TextMeshProUGUI>().SetText(_text);
+            OnOverlapCircleAll?.Invoke(_nearbyResourceNodeCount, _totalAmountPerCycle);
         }
 
         private void Update()
         {
+            if (!_isInitialized) return;
+
             _timeLeft -= Time.deltaTime;
             if (_timeLeft <= 0)
             {
                 _timeLeft += _timeCost;
                 _resourceStorage.AddResource(_resourceGeneratorData.ResourceType, _totalAmountPerCycle);
             }
+        }
+
+        public void SetTransparent(bool value)
+        {
+            OnSetTransparent?.Invoke(value);
+        }
+
+        public void SetNodeDetectionCircleActive(bool value)
+        {
+            OnSetNodeDetectionCircleActive?.Invoke(value, _resourceGeneratorData.NodeDetectionRadius);
         }
     }
 }
