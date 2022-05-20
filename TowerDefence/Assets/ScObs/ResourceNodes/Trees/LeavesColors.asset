@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a105fb7c2d52574ca9540469758096d, type: 3}
+  m_Name: LeavesColors
+  m_EditorClassIdentifier: 
+  _items:
+  - {fileID: 11400000, guid: 3e2b3e85542bd2f4ead3b964ae4fe755, type: 2}
+  - {fileID: 11400000, guid: e7469d651b130ed4f87c29edff1a0169, type: 2}
+  - {fileID: 11400000, guid: 522189e3ea14125439b3cf1f1d22095a, type: 2}
+  - {fileID: 11400000, guid: 4750d38e85a551843a50410c60c8460e, type: 2}

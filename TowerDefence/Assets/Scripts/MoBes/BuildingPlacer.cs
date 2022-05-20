@@ -44,19 +44,10 @@ namespace nsBuildingPlacer
             bool isRMBDown = Input.GetMouseButtonDown(1);
             bool isPointerOverGameObject = EventSystem.current.IsPointerOverGameObject();
 
-            if (isLMBDown && !isPointerOverGameObject && (CurrentBuildingType != null))
+            if (isLMBDown && (CurrentBuildingType != null) && !isPointerOverGameObject)
             {
-                Transform newBuilding = Instantiate(CurrentBuildingType.Prefab, _mousePositionHelper.MouseWorldPosition, Quaternion.identity);
-                newBuilding.parent = transform;
-                ResourceGenerator resourceGenerator = newBuilding.GetComponent<ResourceGenerator>();
-                if (resourceGenerator != null)
-                {
-                    resourceGenerator.Initialize(_resourceStorage);
-                }
-                else
-                {
-                    Debug.Log("Error initializing a building prefab!");
-                }
+                ResourceGenerator resourceGenerator = Instantiate(CurrentBuildingType.ResourceGenerator, _mousePositionHelper.MouseWorldPosition, Quaternion.identity, transform);
+                resourceGenerator.Initialize(_resourceStorage);
             }
 
             foreach (BuildingType buildingType in _buildingTypes.List)
