@@ -1,67 +1,67 @@
 using nsBuildingPlacer;
 using nsBuildingType;
+using nsBuildingTypes;
 using nsMousePositionHelper;
 using nsNearbyResourceNodeFinder;
-using nsResourceNode;
-using TMPro;
+using nsResourceGenerator;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace nsGhostBuilding
 {
     public class GhostBuilding : MonoBehaviour
     {
+        [SerializeField] private BuildingTypes _buildingTypes;
         [SerializeField] private BuildingPlacer _buildingPlacer;
+
+        private Dictionary<BuildingType, ResourceGenerator> _resourceGeneratorGhosts;
 
         private NearbyResourceNodeFinder _nearbyResourceNodeFinder;
         private MousePositionHelper _mousePositionHelper;
+
         private BuildingType _currentBuildingType;
-        private SpriteRenderer _spriteRenderer;
-        private TextMeshProUGUI _textMeshPro;
+        private ResourceGenerator _currentResourceGeneratorGhost;
 
         private int _nearbyResourceNodeCount;
         private int _totalAmountPerCycle;
-        private string _text;
 
         private void OnEnable()
         {
-            if (_spriteRenderer == null) _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-            if (_textMeshPro == null) _textMeshPro = GetComponentInChildren<TextMeshProUGUI>();
-            if (_spriteRenderer == null) return;
-            if (_textMeshPro == null) return;
             _buildingPlacer.OnCurrentBuildingTypeChange += BuildingPlacer_OnCurrentBuildingTypeChange;
         }
 
         private void OnDisable()
         {
-            if (_spriteRenderer == null) _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-            if (_textMeshPro == null) _textMeshPro = GetComponentInChildren<TextMeshProUGUI>();
-            if (_spriteRenderer == null) return;
-            if (_textMeshPro == null) return;
             _buildingPlacer.OnCurrentBuildingTypeChange -= BuildingPlacer_OnCurrentBuildingTypeChange;
         }
 
         private void BuildingPlacer_OnCurrentBuildingTypeChange(BuildingType buildingType)
         {
             _currentBuildingType = buildingType;
-            if (_currentBuildingType == null)
+            if (_currentResourceGeneratorGhost != null) _currentResourceGeneratorGhost.gameObject.SetActive(false);
+            if (_currentBuildingType != null)
             {
-                _spriteRenderer.enabled = false;
-                _textMeshPro.enabled = false;
-            }
-            else
-            {
-                _spriteRenderer.sprite = _currentBuildingType.Sprite;
-                _spriteRenderer.enabled = true;
-                _textMeshPro.enabled = true;
+                if (_mousePositionHelper != null) transform.position = _mousePositionHelper.MouseWorldPosition;
+                _currentResourceGeneratorGhost = _resourceGeneratorGhosts[buildingType];
+                _currentResourceGeneratorGhost.gameObject.SetActive(true);
             }
         }
 
         private void Awake()
         {
+            _resourceGeneratorGhosts = new Dictionary<BuildingType, ResourceGenerator>();
             _nearbyResourceNodeFinder = new NearbyResourceNodeFinder();
+            _mousePositionHelper = null;
             _currentBuildingType = null;
-            _spriteRenderer = null;
-            _textMeshPro = null;
+
+            foreach (BuildingType buildingType in _buildingTypes.List)
+            {
+                ResourceGenerator resourceGeneratorGhost = Instantiate(buildingType.ResourceGenerator, transform, false);
+                _resourceGeneratorGhosts[buildingType] = resourceGeneratorGhost;
+                resourceGeneratorGhost.SetTransparent(true);
+                resourceGeneratorGhost.SetNodeDetectionCircleActive(true);
+                resourceGeneratorGhost.gameObject.SetActive(false);
+            }
         }
 
         private void Start()
@@ -71,14 +71,12 @@ namespace nsGhostBuilding
 
         private void Update()
         {
-            if (_spriteRenderer == null) return;
-            if (_spriteRenderer.enabled == false) return;
-            transform.position = _mousePositionHelper.MouseWorldPosition;
+            if (_currentBuildingType == null) return;
 
+            transform.position = _mousePositionHelper.MouseWorldPosition;
             _nearbyResourceNodeCount = _nearbyResourceNodeFinder.OverlapCircleAll(transform.position, _currentBuildingType.ResourceGeneratorData.NodeDetectionRadius, _currentBuildingType.ResourceGeneratorData.ResourceType);
             _totalAmountPerCycle = _nearbyResourceNodeCount * _currentBuildingType.ResourceGeneratorData.AmountPerCycle;
-            _text = string.Concat('+', _totalAmountPerCycle, ' ', '(', _nearbyResourceNodeCount, ')');
-            _textMeshPro.SetText(_text);
+            _currentResourceGeneratorGhost.OnOverlapCircleAll?.Invoke(_nearbyResourceNodeCount, _totalAmountPerCycle);
         }
     }
 }

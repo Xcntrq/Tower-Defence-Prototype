@@ -1,3 +1,4 @@
+using nsResourceGenerator;
 using nsResourceGeneratorData;
 using UnityEngine;
 
@@ -7,14 +8,14 @@ namespace nsBuildingType
     public class BuildingType : ScriptableObject
     {
         [SerializeField] private string _name;
-        [SerializeField] private Transform _prefab;
         [SerializeField] private Sprite _sprite;
         [SerializeField] private KeyCode _keyCode;
+        [SerializeField] private ResourceGenerator _resourceGenerator;
         [SerializeField] private ResourceGeneratorData _resourceGeneratorData;
 
-        public Transform Prefab => _prefab;
         public Sprite Sprite => _sprite;
         public KeyCode KeyCode => _keyCode;
+        public ResourceGenerator ResourceGenerator => _resourceGenerator;
         public ResourceGeneratorData ResourceGeneratorData => _resourceGeneratorData;
     }
 }
