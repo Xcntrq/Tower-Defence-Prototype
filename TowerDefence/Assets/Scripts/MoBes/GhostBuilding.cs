@@ -1,9 +1,10 @@
 using nsBuildingPlacer;
 using nsBuildingType;
 using nsBuildingTypes;
+using nsColorValue;
 using nsMousePositionHelper;
-using nsNearbyResourceNodeFinder;
 using nsResourceGenerator;
+using nsResourceNode;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,17 +14,13 @@ namespace nsGhostBuilding
     {
         [SerializeField] private BuildingTypes _buildingTypes;
         [SerializeField] private BuildingPlacer _buildingPlacer;
+        [SerializeField] private ColorValue _resourceNodeHighlightColor;
 
         private Dictionary<BuildingType, ResourceGenerator> _resourceGeneratorGhosts;
-
-        private NearbyResourceNodeFinder _nearbyResourceNodeFinder;
-        private MousePositionHelper _mousePositionHelper;
-
-        private BuildingType _currentBuildingType;
         private ResourceGenerator _currentResourceGeneratorGhost;
-
-        private int _nearbyResourceNodeCount;
-        private int _totalAmountPerCycle;
+        private BuildingType _currentBuildingType;
+        private MousePositionHelper _mousePositionHelper;
+        private HashSet<ResourceNode> _currentlyHighlightedResourceNodes;
 
         private void OnEnable()
         {
@@ -38,7 +35,14 @@ namespace nsGhostBuilding
         private void BuildingPlacer_OnCurrentBuildingTypeChange(BuildingType buildingType)
         {
             _currentBuildingType = buildingType;
-            if (_currentResourceGeneratorGhost != null) _currentResourceGeneratorGhost.gameObject.SetActive(false);
+            if (_currentResourceGeneratorGhost != null)
+            {
+                foreach (ResourceNode resourceNode in _currentlyHighlightedResourceNodes)
+                {
+                    resourceNode.ChangeColor(null);
+                }
+                _currentResourceGeneratorGhost.gameObject.SetActive(false);
+            }
             if (_currentBuildingType != null)
             {
                 if (_mousePositionHelper != null) transform.position = _mousePositionHelper.MouseWorldPosition;
@@ -50,7 +54,7 @@ namespace nsGhostBuilding
         private void Awake()
         {
             _resourceGeneratorGhosts = new Dictionary<BuildingType, ResourceGenerator>();
-            _nearbyResourceNodeFinder = new NearbyResourceNodeFinder();
+            _currentlyHighlightedResourceNodes = new HashSet<ResourceNode>();
             _mousePositionHelper = null;
             _currentBuildingType = null;
 
@@ -74,9 +78,20 @@ namespace nsGhostBuilding
             if (_currentBuildingType == null) return;
 
             transform.position = _mousePositionHelper.MouseWorldPosition;
-            _nearbyResourceNodeCount = _nearbyResourceNodeFinder.OverlapCircleAll(transform.position, _currentBuildingType.ResourceGeneratorData.NodeDetectionRadius, _currentBuildingType.ResourceGeneratorData.ResourceType);
-            _totalAmountPerCycle = _nearbyResourceNodeCount * _currentBuildingType.ResourceGeneratorData.AmountPerCycle;
-            _currentResourceGeneratorGhost.OnOverlapCircleAll?.Invoke(_nearbyResourceNodeCount, _totalAmountPerCycle);
+
+            HashSet<ResourceNode> desiredNearbyResourceNodes = _currentResourceGeneratorGhost.FindNearbyResourceNodes();
+            foreach (ResourceNode resourceNode in desiredNearbyResourceNodes)
+            {
+                resourceNode.ChangeColor(_resourceNodeHighlightColor);
+            }
+
+            _currentlyHighlightedResourceNodes.ExceptWith(desiredNearbyResourceNodes);
+            foreach (ResourceNode resourceNode in _currentlyHighlightedResourceNodes)
+            {
+                resourceNode.ChangeColor(null);
+            }
+
+            _currentlyHighlightedResourceNodes = desiredNearbyResourceNodes;
         }
     }
 }

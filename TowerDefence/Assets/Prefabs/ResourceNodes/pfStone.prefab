@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 5512348127977163961}
   - component: {fileID: 5512348127977163960}
   - component: {fileID: 5512348127977163966}
+  - component: {fileID: 4723642555942335804}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -189,3 +190,16 @@ MonoBehaviour:
   _spriteList: {fileID: 11400000, guid: 105a67703e91141449e3392693e8100e, type: 2}
   _colorList: {fileID: 11400000, guid: b9b5c36376dd5b54ab4d1579857f0b1c, type: 2}
   _seed: {fileID: 11400000, guid: dda94388aa7949b4f9d9d028eceb481a, type: 2}
+--- !u!114 &4723642555942335804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5512348127977163963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dda33ec8430d52e46b99e5131605bc7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _resourceNode: {fileID: 3134471631360587201}

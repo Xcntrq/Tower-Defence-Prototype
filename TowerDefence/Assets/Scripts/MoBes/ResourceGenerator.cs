@@ -1,8 +1,10 @@
 using nsBuildingType;
 using nsNearbyResourceNodeFinder;
 using nsResourceGeneratorData;
+using nsResourceNode;
 using nsResourceStorage;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace nsResourceGenerator
@@ -42,9 +44,7 @@ namespace nsResourceGenerator
 
         private void Start()
         {
-            _nearbyResourceNodeCount = _nearbyResourceNodeFinder.OverlapCircleAll(transform.position, _resourceGeneratorData.NodeDetectionRadius, _resourceGeneratorData.ResourceType);
-            _totalAmountPerCycle = _nearbyResourceNodeCount * _resourceGeneratorData.AmountPerCycle;
-            OnOverlapCircleAll?.Invoke(_nearbyResourceNodeCount, _totalAmountPerCycle);
+            FindNearbyResourceNodes();
         }
 
         private void Update()
@@ -57,6 +57,15 @@ namespace nsResourceGenerator
                 _timeLeft += _timeCost;
                 _resourceStorage.AddResource(_resourceGeneratorData.ResourceType, _totalAmountPerCycle);
             }
+        }
+
+        public HashSet<ResourceNode> FindNearbyResourceNodes()
+        {
+            HashSet<ResourceNode> desiredNearbyResourceNodes = _nearbyResourceNodeFinder.OverlapCircleAll(transform.position, _resourceGeneratorData.NodeDetectionRadius, _resourceGeneratorData.ResourceType);
+            _nearbyResourceNodeCount = desiredNearbyResourceNodes.Count;
+            _totalAmountPerCycle = _nearbyResourceNodeCount * _resourceGeneratorData.AmountPerCycle;
+            OnOverlapCircleAll?.Invoke(_nearbyResourceNodeCount, _totalAmountPerCycle);
+            return desiredNearbyResourceNodes;
         }
 
         public void SetTransparent(bool value)
