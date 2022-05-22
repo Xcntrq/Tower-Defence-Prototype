@@ -1,11 +1,10 @@
 using nsBuildingType;
 using nsBuildingTypes;
-using nsMousePositionHelper;
 using nsResourceGenerator;
 using nsResourceStorage;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace nsBuildingPlacer
 {
@@ -14,7 +13,8 @@ namespace nsBuildingPlacer
         [SerializeField] private BuildingTypes _buildingTypes;
         [SerializeField] private ResourceStorage _resourceStorage;
 
-        private MousePositionHelper _mousePositionHelper;
+        private List<ResourceGenerator> _placedResourceGenerators;
+        private bool _areBuildingCirclesActive;
         private BuildingType _currentBuildingType;
 
         public BuildingType CurrentBuildingType
@@ -32,33 +32,48 @@ namespace nsBuildingPlacer
 
         public Action<BuildingType> OnCurrentBuildingTypeChange;
 
+        private void Awake()
+        {
+            _placedResourceGenerators = new List<ResourceGenerator>();
+            _areBuildingCirclesActive = false;
+        }
+
         private void Start()
         {
-            _mousePositionHelper = new MousePositionHelper(Camera.main);
+            CurrentBuildingType = _buildingTypes.List[0];
+            PlaceBuilding(Vector3.zero);
             CurrentBuildingType = null;
         }
 
         private void Update()
         {
-            bool isLMBDown = Input.GetMouseButtonDown(0);
-            bool isRMBDown = Input.GetMouseButtonDown(1);
-            bool isPointerOverGameObject = EventSystem.current.IsPointerOverGameObject();
-
-            if (isLMBDown && (CurrentBuildingType != null) && !isPointerOverGameObject)
-            {
-                ResourceGenerator resourceGenerator = Instantiate(CurrentBuildingType.ResourceGenerator, _mousePositionHelper.MouseWorldPosition, Quaternion.identity, transform);
-                resourceGenerator.Initialize(_resourceStorage);
-            }
-
             foreach (BuildingType buildingType in _buildingTypes.List)
             {
                 bool isKeyPressed = Input.GetKeyDown(buildingType.KeyCode);
                 if (isKeyPressed) CurrentBuildingType = buildingType;
             }
 
+            bool isRMBDown = Input.GetMouseButtonDown(1);
             if (Input.GetKeyDown(KeyCode.Escape) || isRMBDown)
             {
                 CurrentBuildingType = null;
+            }
+        }
+
+        public void PlaceBuilding(Vector3 position)
+        {
+            ResourceGenerator resourceGenerator = Instantiate(CurrentBuildingType.ResourceGenerator, position, Quaternion.identity, transform);
+            resourceGenerator.Initialize(_resourceStorage);
+            _placedResourceGenerators.Add(resourceGenerator);
+            SetBuildingCirclesActiveAll(_areBuildingCirclesActive);
+        }
+
+        public void SetBuildingCirclesActiveAll(bool value)
+        {
+            _areBuildingCirclesActive = value;
+            foreach (ResourceGenerator resourceGenerator in _placedResourceGenerators)
+            {
+                resourceGenerator.SetBuildingCirclesActive(value);
             }
         }
     }

@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a105fb7c2d52574ca9540469758096d, type: 3}
-  m_Name: GoldColors
+  m_Script: {fileID: 11500000, guid: 8ee1a0999f51d2946afa77f469fa4769, type: 3}
+  m_Name: Stone-1-Sprites
   m_EditorClassIdentifier: 
   _items:
-  - {fileID: 11400000, guid: 775ebbb2315fb7b488b3e93a99c2e762, type: 2}
+  - {fileID: 21300000, guid: 990177c0c4b008443ac302a204729164, type: 3}
