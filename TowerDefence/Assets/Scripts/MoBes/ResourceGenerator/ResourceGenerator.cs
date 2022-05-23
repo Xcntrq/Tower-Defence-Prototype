@@ -36,9 +36,13 @@ namespace nsResourceGenerator
         public Action<bool> OnSetBuildingCirclesActive;
         public Action<BuildingDistance> OnSetBuildingCirclesDistance;
 
+        public Action<int> OnGetToWork;
+
         public void Initialize(ResourceStorage resourceStorage)
         {
             _resourceStorage = resourceStorage;
+            FindNearbyResourceNodes();
+            if (_nearbyResourceNodeCount > 0) OnGetToWork?.Invoke(_nearbyResourceNodeCount);
             _isInitialized = true;
         }
 
@@ -50,11 +54,11 @@ namespace nsResourceGenerator
             _timeCost = _resourceGeneratorData.TimeCost;
             _timeLeft = _timeCost;
             _isInitialized = false;
+            _totalAmountPerCycle = 0;
         }
 
         private void Start()
         {
-            FindNearbyResourceNodes();
             OnSetBuildingCirclesDistance?.Invoke(_buildingDistance);
             OnSetNodeDetectionCircleDistance?.Invoke(_resourceGeneratorData.NodeDetectionRadius);
         }

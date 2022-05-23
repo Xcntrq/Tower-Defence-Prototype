@@ -59,6 +59,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pfGoldHarvester
       objectReference: {fileID: 0}
+    - target: {fileID: 5969072508476473481, guid: bf5856c08113f8143b2f14066c67072d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 989707981b4a85d4bb8106098b9fbef9, type: 3}
     - target: {fileID: 6201771733197484694, guid: bf5856c08113f8143b2f14066c67072d, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
@@ -83,6 +87,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6922652247178123263, guid: bf5856c08113f8143b2f14066c67072d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 37048fb1df23efc4da4f818cca3b8b0a, type: 3}
     - target: {fileID: 9085394953118524985, guid: bf5856c08113f8143b2f14066c67072d, type: 3}
       propertyPath: m_Sprite
       value: 
