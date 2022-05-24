@@ -18,6 +18,11 @@ MonoBehaviour:
   _resourceGenerator: {fileID: 7865257973505090126, guid: ef0173b2807bc2c4ca9c0b74c7d14cd0, type: 3}
   _resourceGeneratorData:
     _amountPerCycle: 5
-    _timeCost: 4
+    _timeCost: 20
     _nodeDetectionRadius: 4
     _resourceType: {fileID: 11400000, guid: 03c70fa4f5eeff741aefe6985ae5a04b, type: 2}
+  _resourceCosts:
+  - _resourceType: {fileID: 11400000, guid: dc1f9caca0c54e548802e7666787e39c, type: 2}
+    _value: 600
+  - _resourceType: {fileID: 11400000, guid: 788020552458df24a8ce9adc53a75f43, type: 2}
+    _value: 200

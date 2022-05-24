@@ -18,6 +18,9 @@ MonoBehaviour:
   _resourceGenerator: {fileID: 2250595341607995491, guid: bf5856c08113f8143b2f14066c67072d, type: 3}
   _resourceGeneratorData:
     _amountPerCycle: 15
-    _timeCost: 1
+    _timeCost: 10
     _nodeDetectionRadius: 6
     _resourceType: {fileID: 11400000, guid: dc1f9caca0c54e548802e7666787e39c, type: 2}
+  _resourceCosts:
+  - _resourceType: {fileID: 11400000, guid: dc1f9caca0c54e548802e7666787e39c, type: 2}
+    _value: 150
