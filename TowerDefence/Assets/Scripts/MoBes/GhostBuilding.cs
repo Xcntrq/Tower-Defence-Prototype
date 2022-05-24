@@ -5,6 +5,7 @@ using nsBuildingTypes;
 using nsColorValue;
 using nsMousePositionHelper;
 using nsResourceGenerator;
+using nsResourceStorage;
 using nsSpriteParent;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace nsGhostBuilding
 {
     public class GhostBuilding : MonoBehaviour
     {
+        [SerializeField] private ResourceStorage _resourceStorage;
         [SerializeField] private BuildingTypes _buildingTypes;
         [SerializeField] private BuildingPlacer _buildingPlacer;
         [SerializeField] private ColorValue _resourceNodeHighlightColor;
@@ -33,7 +35,7 @@ namespace nsGhostBuilding
         private HashSet<SpriteParent> _resourceNodes;
 
         private int _overlappingCollidersCount;
-        private bool isCurrentPositionBuildable;
+        private bool isCurrentlyBuildable;
         private bool isPointerOverGameObject;
         private bool isLMBDown;
 
@@ -136,13 +138,17 @@ namespace nsGhostBuilding
             _cachedColorables.UnionWith(_colorableColliders);
 
             //Set color to the building prefab
-            isCurrentPositionBuildable = (_overlappingCollidersCount == 0) && _currentResourceGeneratorGhost.IsWithinPylonRange();
-            _currentResourceGeneratorGhost.ApplyColor(isCurrentPositionBuildable ? _enabledForBuildingColor : _disabledForBuildingColor);
+            isCurrentlyBuildable = (_overlappingCollidersCount == 0) && _currentResourceGeneratorGhost.IsWithinPylonRange() && _resourceStorage.IsAffordable(_currentBuildingType);
+            _currentResourceGeneratorGhost.ApplyColor(isCurrentlyBuildable ? _enabledForBuildingColor : _disabledForBuildingColor);
 
             //Build order
             isLMBDown = Input.GetMouseButtonDown(0);
             isPointerOverGameObject = EventSystem.current.IsPointerOverGameObject();
-            if (isLMBDown && isCurrentPositionBuildable && !isPointerOverGameObject) _buildingPlacer.PlaceBuilding(_mousePosition);
+            if (isLMBDown && isCurrentlyBuildable && !isPointerOverGameObject)
+            {
+                _resourceStorage.TakeResources(_currentBuildingType);
+                _buildingPlacer.PlaceBuilding(_mousePosition);
+            }
         }
     }
 }
