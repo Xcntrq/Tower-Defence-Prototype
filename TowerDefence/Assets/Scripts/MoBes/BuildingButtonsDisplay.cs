@@ -1,6 +1,8 @@
 using nsBuildingPlacer;
 using nsBuildingType;
 using nsBuildingTypes;
+using nsMouseEnterExit;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,6 +10,12 @@ using UnityEngine.UI;
 
 namespace nsBuildingButtonsDisplay
 {
+    public class MouseEnterEventArgs : EventArgs
+    {
+        public BuildingType BuildingType { get; set; }
+        public RectTransform PanelRectTransform { get; set; }
+    }
+
     public class BuildingButtonsDisplay : MonoBehaviour
     {
         [SerializeField] private BuildingPlacer _buildingPlacer;
@@ -20,6 +28,9 @@ namespace nsBuildingButtonsDisplay
 
         private Dictionary<BuildingType, GameObject> _items;
         private GameObject _lastItem;
+
+        public event EventHandler<MouseEnterEventArgs> OnMouseEnter;
+        public event Action OnMouseExit;
 
         private void OnEnable()
         {
@@ -59,6 +70,9 @@ namespace nsBuildingButtonsDisplay
                 newItem.GetComponentInChildren<LayoutElement>().GetComponent<Image>().sprite = buildingType.Sprite;
                 newItem.GetComponentInChildren<TextMeshProUGUI>().SetText(index++.ToString());
                 newItem.GetComponent<Button>().onClick.AddListener(() => { _buildingPlacer.CurrentBuildingType = buildingType; });
+                MouseEnterEventArgs mouseEnterEventArgs = new() { BuildingType = buildingType, PanelRectTransform = GetComponent<RectTransform>() };
+                newItem.GetComponentInChildren<MouseEnterExit>().OnMouseEnter += (object sender, EventArgs e) => { OnMouseEnter?.Invoke(sender, mouseEnterEventArgs); };
+                newItem.GetComponentInChildren<MouseEnterExit>().OnMouseExit += (object sender, EventArgs e) => { OnMouseExit?.Invoke(); };
                 _items[buildingType] = newItem;
             }
             _lastItem = Instantiate(_pfItem, transform);

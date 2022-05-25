@@ -16,6 +16,7 @@ namespace nsBuildingType
         [SerializeField] private ResourceGeneratorData _resourceGeneratorData;
         [SerializeField] private List<ResourceCost> _resourceCosts;
 
+        public string Name => _name;
         public Sprite Sprite => _sprite;
         public KeyCode KeyCode => _keyCode;
         public ResourceGenerator ResourceGenerator => _resourceGenerator;
