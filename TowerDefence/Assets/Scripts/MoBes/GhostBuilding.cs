@@ -7,6 +7,7 @@ using nsMousePositionHelper;
 using nsResourceGenerator;
 using nsResourceStorage;
 using nsSpriteParent;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -22,6 +23,7 @@ namespace nsGhostBuilding
         [SerializeField] private ColorValue _overlappingColliderColor;
         [SerializeField] private ColorValue _enabledForBuildingColor;
         [SerializeField] private ColorValue _disabledForBuildingColor;
+        [SerializeField] private float _tooltipDelay;
 
         private Dictionary<BuildingType, ResourceGenerator> _resourceGeneratorGhosts;
         private ResourceGenerator _currentResourceGeneratorGhost;
@@ -34,10 +36,15 @@ namespace nsGhostBuilding
         private HashSet<SpriteParent> _colorableColliders;
         private HashSet<SpriteParent> _resourceNodes;
 
-        private int _overlappingCollidersCount;
-        private bool isCurrentlyBuildable;
-        private bool isPointerOverGameObject;
-        private bool isLMBDown;
+        private bool _isSpaceEmpty;
+        private bool _isAffordable;
+        private bool _isWithinPylonRange;
+        private bool _isCurrentlyBuildable;
+        private bool _isPointerOverGameObject;
+        private bool _isLMBDown;
+        private string _text;
+
+        public event Action<string, float> OnBuildOrderError;
 
         private void OnEnable()
         {
@@ -110,7 +117,7 @@ namespace nsGhostBuilding
             //Set colors to nodes and colliders
             _resourceNodes = _currentResourceGeneratorGhost.FindNearbyResourceNodes();
             _overlappingColliders = _currentResourceGeneratorGhost.GetOverlappingColliders();
-            _overlappingCollidersCount = _overlappingColliders.Count;
+            _isSpaceEmpty = _overlappingColliders.Count == 0;
 
             _colorableColliders.Clear();
             foreach (Collider2D collider in _overlappingColliders)
@@ -138,16 +145,41 @@ namespace nsGhostBuilding
             _cachedColorables.UnionWith(_colorableColliders);
 
             //Set color to the building prefab
-            isCurrentlyBuildable = (_overlappingCollidersCount == 0) && _currentResourceGeneratorGhost.IsWithinPylonRange() && _resourceStorage.IsAffordable(_currentBuildingType);
-            _currentResourceGeneratorGhost.ApplyColor(isCurrentlyBuildable ? _enabledForBuildingColor : _disabledForBuildingColor);
+            _isAffordable = _resourceStorage.IsAffordable(_currentBuildingType);
+            _isWithinPylonRange = _currentResourceGeneratorGhost.IsWithinPylonRange();
+            _isCurrentlyBuildable = _isSpaceEmpty && _isAffordable && _isWithinPylonRange;
+            _currentResourceGeneratorGhost.ApplyColor(_isCurrentlyBuildable ? _enabledForBuildingColor : _disabledForBuildingColor);
 
             //Build order
-            isLMBDown = Input.GetMouseButtonDown(0);
-            isPointerOverGameObject = EventSystem.current.IsPointerOverGameObject();
-            if (isLMBDown && isCurrentlyBuildable && !isPointerOverGameObject)
+            _isLMBDown = Input.GetMouseButtonDown(0);
+            _isPointerOverGameObject = EventSystem.current.IsPointerOverGameObject();
+            if (_isLMBDown && !_isPointerOverGameObject)
             {
-                _resourceStorage.TakeResources(_currentBuildingType);
-                _buildingPlacer.PlaceBuilding(_mousePosition);
+                if (_isCurrentlyBuildable)
+                {
+                    _resourceStorage.TakeResources(_currentBuildingType);
+                    _buildingPlacer.PlaceBuilding(_mousePosition);
+                }
+                else
+                {
+                    _text = "";
+                    if (!_isSpaceEmpty)
+                    {
+                        if (_text != "") _text += "<br>";
+                        _text += "- Something is in the way, man!";
+                    }
+                    if (!_isAffordable)
+                    {
+                        if (_text != "") _text += "<br>";
+                        _text += "- Can't afford! Get rich, yo!";
+                    }
+                    if (!_isWithinPylonRange)
+                    {
+                        if (_text != "") _text += "<br>";
+                        _text += "- Too far from the other buildings, lonely and sad!";
+                    }
+                    OnBuildOrderError?.Invoke(_text, _tooltipDelay);
+                }
             }
         }
     }
