@@ -30,7 +30,7 @@ namespace nsBuildingPlacer
             }
         }
 
-        public Action<BuildingType> OnCurrentBuildingTypeChange;
+        public event Action<BuildingType> OnCurrentBuildingTypeChange;
 
         private void Awake()
         {

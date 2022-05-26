@@ -98,6 +98,7 @@ namespace nsGhostBuilding
                 _resourceGeneratorGhosts[buildingType] = resourceGeneratorGhost;
                 resourceGeneratorGhost.SetNodeDetectionCircleActive(true);
                 resourceGeneratorGhost.SetAntiBuildingColliderActive(false);
+                resourceGeneratorGhost.SetHealthActive(false);
                 resourceGeneratorGhost.gameObject.SetActive(false);
             }
         }

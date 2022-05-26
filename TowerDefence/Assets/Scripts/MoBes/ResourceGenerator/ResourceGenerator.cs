@@ -26,17 +26,20 @@ namespace nsResourceGenerator
         private int _totalAmountPerCycle;
         private bool _isInitialized;
 
-        public Action<int, int> OnOverlapCircleAll;
+        public BuildingType BuildingType => _buildingType;
 
-        public Action<bool> OnSetNodeDetectionCircleActive;
-        public Action<float> OnSetNodeDetectionCircleDistance;
+        public event Action<int, int> OnOverlapCircleAll;
 
-        public Action<bool> OnSetAntiBuildingColliderActive;
+        public event Action<bool> OnSetNodeDetectionCircleActive;
+        public event Action<float> OnSetNodeDetectionCircleDistance;
 
-        public Action<bool> OnSetBuildingCirclesActive;
-        public Action<BuildingDistance> OnSetBuildingCirclesDistance;
+        public event Action<bool> OnSetAntiBuildingColliderActive;
+        public event Action<bool> OnSetHealthActive;
 
-        public Action<int> OnGetToWork;
+        public event Action<bool> OnSetBuildingCirclesActive;
+        public event Action<BuildingDistance> OnSetBuildingCirclesDistance;
+
+        public event Action<int> OnGetToWork;
 
         public void Initialize(ResourceStorage resourceStorage)
         {
@@ -118,6 +121,11 @@ namespace nsResourceGenerator
         public void SetBuildingCirclesActive(bool value)
         {
             OnSetBuildingCirclesActive?.Invoke(value);
+        }
+
+        public void SetHealthActive(bool value)
+        {
+            OnSetHealthActive?.Invoke(value);
         }
     }
 }
