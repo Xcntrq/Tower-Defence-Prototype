@@ -1,4 +1,5 @@
 using nsBuildingDistance;
+using nsBuildingPlacer;
 using nsBuildingType;
 using nsNearbyResourceNodeFinder;
 using nsResourceGeneratorData;
@@ -18,6 +19,7 @@ namespace nsResourceGenerator
         private NearbyResourceNodeFinder _nearbyResourceNodeFinder;
         private ResourceGeneratorData _resourceGeneratorData;
         private ResourceStorage _resourceStorage;
+        private BuildingPlacer _buildingPlacer;
         private BoxCollider2D _boxCollider2D;
 
         private float _timeLeft;
@@ -41,9 +43,10 @@ namespace nsResourceGenerator
 
         public event Action<int> OnGetToWork;
 
-        public void Initialize(ResourceStorage resourceStorage)
+        public void Initialize(ResourceStorage resourceStorage, BuildingPlacer buildingPlacer)
         {
             _resourceStorage = resourceStorage;
+            _buildingPlacer = buildingPlacer;
             FindNearbyResourceNodes();
             if (_nearbyResourceNodeCount > 0) OnGetToWork?.Invoke(_nearbyResourceNodeCount);
             _isInitialized = true;
@@ -76,6 +79,11 @@ namespace nsResourceGenerator
                 _timeLeft += _timeCost;
                 _resourceStorage.AddResource(_resourceGeneratorData.ResourceType, _totalAmountPerCycle);
             }
+        }
+
+        private void OnDestroy()
+        {
+            if (_buildingPlacer != null) _buildingPlacer.PlacedResourceGenerators.Remove(this);
         }
 
         public HashSet<SpriteParent> FindNearbyResourceNodes()
@@ -126,6 +134,11 @@ namespace nsResourceGenerator
         public void SetHealthActive(bool value)
         {
             OnSetHealthActive?.Invoke(value);
+        }
+
+        public void SetColliderTrigger(bool value)
+        {
+            _boxCollider2D.isTrigger = value;
         }
     }
 }

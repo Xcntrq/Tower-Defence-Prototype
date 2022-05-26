@@ -96,6 +96,7 @@ namespace nsGhostBuilding
             {
                 ResourceGenerator resourceGeneratorGhost = Instantiate(buildingType.ResourceGenerator, transform, false);
                 _resourceGeneratorGhosts[buildingType] = resourceGeneratorGhost;
+                resourceGeneratorGhost.SetColliderTrigger(true);
                 resourceGeneratorGhost.SetNodeDetectionCircleActive(true);
                 resourceGeneratorGhost.SetAntiBuildingColliderActive(false);
                 resourceGeneratorGhost.SetHealthActive(false);
@@ -156,6 +157,8 @@ namespace nsGhostBuilding
             _isPointerOverGameObject = EventSystem.current.IsPointerOverGameObject();
             if (_isLMBDown && !_isPointerOverGameObject)
             {
+                //_isSpaceEmpty = _currentResourceGeneratorGhost.GetOverlappingColliders().Count == 0;
+                //_isCurrentlyBuildable = _isSpaceEmpty && _isAffordable && _isWithinPylonRange;
                 if (_isCurrentlyBuildable)
                 {
                     _resourceStorage.TakeResources(_currentBuildingType);
@@ -177,7 +180,7 @@ namespace nsGhostBuilding
                     if (!_isWithinPylonRange)
                     {
                         if (_text != "") _text += "<br>";
-                        _text += "- Too far from the other buildings, lonely and sad!";
+                        _text += "- Too far away from the other buildings, lonely and sad!";
                     }
                     OnBuildOrderError?.Invoke(_text, _tooltipDelay);
                 }

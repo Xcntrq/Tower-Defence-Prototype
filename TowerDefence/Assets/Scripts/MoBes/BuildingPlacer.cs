@@ -13,9 +13,18 @@ namespace nsBuildingPlacer
         [SerializeField] private BuildingTypes _buildingTypes;
         [SerializeField] private ResourceStorage _resourceStorage;
 
-        private List<ResourceGenerator> _placedResourceGenerators;
+        private HashSet<ResourceGenerator> _placedResourceGenerators;
         private bool _areBuildingCirclesActive;
         private BuildingType _currentBuildingType;
+
+        public HashSet<ResourceGenerator> PlacedResourceGenerators
+        {
+            get
+            {
+                if (_placedResourceGenerators == null) _placedResourceGenerators = new HashSet<ResourceGenerator>();
+                return _placedResourceGenerators;
+            }
+        }
 
         public BuildingType CurrentBuildingType
         {
@@ -34,7 +43,6 @@ namespace nsBuildingPlacer
 
         private void Awake()
         {
-            _placedResourceGenerators = new List<ResourceGenerator>();
             _areBuildingCirclesActive = false;
         }
 
@@ -63,15 +71,15 @@ namespace nsBuildingPlacer
         public void PlaceBuilding(Vector3 position)
         {
             ResourceGenerator resourceGenerator = Instantiate(CurrentBuildingType.ResourceGenerator, position, Quaternion.identity, transform);
-            resourceGenerator.Initialize(_resourceStorage);
-            _placedResourceGenerators.Add(resourceGenerator);
+            resourceGenerator.Initialize(_resourceStorage, this);
+            PlacedResourceGenerators.Add(resourceGenerator);
             SetBuildingCirclesActiveAll(_areBuildingCirclesActive);
         }
 
         public void SetBuildingCirclesActiveAll(bool value)
         {
             _areBuildingCirclesActive = value;
-            foreach (ResourceGenerator resourceGenerator in _placedResourceGenerators)
+            foreach (ResourceGenerator resourceGenerator in PlacedResourceGenerators)
             {
                 resourceGenerator.SetBuildingCirclesActive(value);
             }
