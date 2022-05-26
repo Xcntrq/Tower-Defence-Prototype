@@ -6,7 +6,7 @@ namespace nsSpriteParent
 {
     public abstract class SpriteParent : MonoBehaviour
     {
-        public Action<ColorValue> OnApplyColor;
+        public event Action<ColorValue> OnApplyColor;
 
         public void ApplyColor(ColorValue colorValue)
         {

@@ -13,7 +13,7 @@ namespace nsResourceStorage
         [SerializeField] private ResourceTypes _resourceTypes;
 
         private Dictionary<ResourceType, int> _resourceAmounts;
-        public Action<ResourceType, int> OnAmountChange;
+        public event Action<ResourceType, int> OnAmountChange;
 
         private void Awake()
         {

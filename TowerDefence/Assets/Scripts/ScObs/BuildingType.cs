@@ -12,6 +12,7 @@ namespace nsBuildingType
         [SerializeField] private string _name;
         [SerializeField] private Sprite _sprite;
         [SerializeField] private KeyCode _keyCode;
+        [SerializeField] private int _maxHealth;
         [SerializeField] private ResourceGenerator _resourceGenerator;
         [SerializeField] private ResourceGeneratorData _resourceGeneratorData;
         [SerializeField] private List<ResourceCost> _resourceCosts;
@@ -19,6 +20,7 @@ namespace nsBuildingType
         public string Name => _name;
         public Sprite Sprite => _sprite;
         public KeyCode KeyCode => _keyCode;
+        public int MaxHealth => _maxHealth;
         public ResourceGenerator ResourceGenerator => _resourceGenerator;
         public ResourceGeneratorData ResourceGeneratorData => _resourceGeneratorData;
         public List<ResourceCost> ResourceCosts => _resourceCosts;

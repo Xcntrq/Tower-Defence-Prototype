@@ -15,6 +15,7 @@ MonoBehaviour:
   _name: Gold Mine
   _sprite: {fileID: 21300000, guid: a02d934633803124a89456e505e55cac, type: 3}
   _keyCode: 51
+  _maxHealth: 100
   _resourceGenerator: {fileID: 7865257973505090126, guid: ef0173b2807bc2c4ca9c0b74c7d14cd0, type: 3}
   _resourceGeneratorData:
     _amountPerCycle: 5
