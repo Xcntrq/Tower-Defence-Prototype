@@ -21,7 +21,7 @@ namespace nsAnimatorToggler
 
         private void ResourceGenerator_OnGetToWork(int nearbyResourceNodeCount)
         {
-            _animator.speed = 1 + (float)(nearbyResourceNodeCount - 1) / 10;
+            _animator.speed = 1 + (float)(nearbyResourceNodeCount - 1) / 5;
             _animator.SetBool("working", true);
         }
 

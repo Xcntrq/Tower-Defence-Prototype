@@ -1,3 +1,4 @@
+using nsBuilding;
 using nsBuildingType;
 using nsResourceCost;
 using nsResourceType;
@@ -13,6 +14,7 @@ namespace nsResourceStorage
         [SerializeField] private ResourceTypes _resourceTypes;
 
         private Dictionary<ResourceType, int> _resourceAmounts;
+
         public event Action<ResourceType, int> OnAmountChange;
 
         private void Awake()
@@ -40,18 +42,18 @@ namespace nsResourceStorage
             OnAmountChange?.Invoke(resourceType, _resourceAmounts[resourceType]);
         }
 
-        public void TakeResources(BuildingType buildingType)
+        public void TakeResources(Building building)
         {
-            foreach (ResourceCost resourceCost in buildingType.ResourceCosts)
+            foreach (ResourceCost resourceCost in building.BuildingType.ResourceCosts)
             {
                 _resourceAmounts[resourceCost.ResourceType] -= resourceCost.Value;
                 OnAmountChange?.Invoke(resourceCost.ResourceType, _resourceAmounts[resourceCost.ResourceType]);
             }
         }
 
-        public bool IsAffordable(BuildingType buildingType)
+        public bool IsAffordable(Building building)
         {
-            foreach (ResourceCost resourceCost in buildingType.ResourceCosts)
+            foreach (ResourceCost resourceCost in building.BuildingType.ResourceCosts)
             {
                 if (_resourceAmounts[resourceCost.ResourceType] < resourceCost.Value) return false;
             }

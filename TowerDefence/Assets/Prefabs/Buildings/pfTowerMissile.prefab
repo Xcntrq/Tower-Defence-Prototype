@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &34125441786674759
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1449751490499730089, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: _towerData
+      value: 
+      objectReference: {fileID: 11400000, guid: 9cc378f85f94e084585e0f4b884f2e4f, type: 2}
+    - target: {fileID: 1449751490499730089, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: _projectile
+      value: 
+      objectReference: {fileID: 949328215781938633, guid: 28609104b8c3d0b42a6427b1fd89cfd6, type: 3}
+    - target: {fileID: 1449751490499730089, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: _buildingType
+      value: 
+      objectReference: {fileID: 11400000, guid: cb0684c1426d99247a6652db32db1bb5, type: 2}
+    - target: {fileID: 3517830451195207420, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517830451195207420, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517830451195207420, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517830451195207420, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517830451195207420, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517830451195207420, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517830451195207420, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517830451195207420, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517830451195207420, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517830451195207420, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517830451195207420, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3898979840946446782, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_Name
+      value: pfTowerMissile
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446380658471657535, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 3.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4506962110930026359, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085394953118524985, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_Size.x
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085394953118524985, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_Size.y
+      value: 22.00179
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085394953118524985, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 42f5b74e85d57dc45b44a09ccd3ec1a4, type: 3}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}

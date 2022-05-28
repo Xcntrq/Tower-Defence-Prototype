@@ -1,12 +1,13 @@
-using nsSpriteParent;
+using nsIColorable;
+using nsColorable;
 using UnityEngine;
 
 namespace nsAntiBuildingColliderPainter
 {
-    public class AntiBuildingColliderPainter : MonoBehaviour
+    public class AntiBuildingColliderPainter : MonoBehaviour, IColorableCarrier
     {
-        [SerializeField] private SpriteParent _spriteParent;
+        [SerializeField] private Colorable _colorable;
 
-        public SpriteParent SpriteParent => _spriteParent;
+        public Colorable Colorable => _colorable;
     }
 }

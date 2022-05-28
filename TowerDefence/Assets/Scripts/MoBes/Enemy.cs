@@ -1,18 +1,19 @@
 using nsBuildingPlacer;
 using nsHealth;
-using nsResourceGenerator;
-using nsSpriteParent;
+using nsColorable;
 using System.Collections;
 using UnityEngine;
+using nsBuilding;
+using nsIHealthCarrier;
+using nsEnemyData;
 
 namespace nsEnemy
 {
-    public class Enemy : SpriteParent
+    public class Enemy : Colorable, IHealthCarrier
     {
         [SerializeField] private BuildingPlacer _buildingPlacer;
-        [SerializeField] private float _speed;
-        [SerializeField] private int _damage;
-        [SerializeField] private float _detectionRadius;
+        [SerializeField] private EnemyData _enemyData;
+        [SerializeField] private Transform _aim;
 
         private Rigidbody2D _rigidbody2D;
         private Transform _transform;
@@ -21,6 +22,9 @@ namespace nsEnemy
 
         private Vector3 _defaultScale;
         private Vector3 _invertedScale;
+
+        public Transform Aim => _aim;
+        public int MaxHealth => _enemyData.MaxHealth;
 
         private void Awake()
         {
@@ -39,19 +43,19 @@ namespace nsEnemy
         {
             if (_target == null) return;
             _direction = (_target.position - _transform.position).normalized;
-            _rigidbody2D.velocity = _direction * _speed;
+            _rigidbody2D.velocity = _direction * _enemyData.Speed;
             _transform.localScale = _direction.x >= 0 ? _defaultScale : _invertedScale;
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            ResourceGenerator resourceGenerator = collision.gameObject.GetComponent<ResourceGenerator>();
-            if (resourceGenerator != null)
+            Building building = collision.gameObject.GetComponent<Building>();
+            if (building != null)
             {
-                Health health = resourceGenerator.GetComponent<Health>();
+                Health health = building.GetComponent<Health>();
                 if (health != null)
                 {
-                    health.Decrease(_damage);
+                    health.Decrease(_enemyData.Damage);
                     Destroy(gameObject);
                 }
             }
@@ -67,9 +71,9 @@ namespace nsEnemy
                 {
                     Transform newTarget = null;
                     float minDistance = float.MaxValue;
-                    foreach (ResourceGenerator resourceGenerator in _buildingPlacer.PlacedResourceGenerators)
+                    foreach (Building building in _buildingPlacer.PlacedBuildings)
                     {
-                        Transform newTransform = resourceGenerator.transform;
+                        Transform newTransform = building.transform;
                         float newDistance = Vector3.Distance(_transform.position, newTransform.position);
                         if (newDistance < minDistance)
                         {
@@ -80,19 +84,19 @@ namespace nsEnemy
                     _target = newTarget;
                 }
 
-                Collider2D[] allNearbyColliders = Physics2D.OverlapCircleAll(_transform.position, _detectionRadius);
+                Collider2D[] allNearbyColliders = Physics2D.OverlapCircleAll(_transform.position, _enemyData.DetectionRadius);
                 foreach (Collider2D nearbyCollider in allNearbyColliders)
                 {
-                    ResourceGenerator resourceGenerator = nearbyCollider.GetComponent<ResourceGenerator>();
-                    if (resourceGenerator == null) continue;
-                    bool isPlaced = _buildingPlacer.PlacedResourceGenerators.Contains(resourceGenerator);
+                    Building building = nearbyCollider.GetComponent<Building>();
+                    if (building == null) continue;
+                    bool isPlaced = _buildingPlacer.PlacedBuildings.Contains(building);
                     if (!isPlaced) continue;
                     if (_target == null)
                     {
-                        _target = resourceGenerator.transform;
+                        _target = building.transform;
                         continue;
                     }
-                    Transform newTransform = resourceGenerator.transform;
+                    Transform newTransform = building.transform;
                     float currentDistance = Vector3.Distance(_transform.position, _target.position);
                     float newDistance = Vector3.Distance(_transform.position, newTransform.position);
                     if (newDistance < currentDistance) _target = newTransform;

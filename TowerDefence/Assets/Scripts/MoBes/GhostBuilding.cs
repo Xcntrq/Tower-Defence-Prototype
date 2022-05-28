@@ -1,23 +1,23 @@
-using nsAntiBuildingColliderPainter;
 using nsBuildingPlacer;
-using nsBuildingType;
-using nsBuildingTypes;
+using nsBuildings;
 using nsColorValue;
+using nsIColorable;
 using nsMousePositionHelper;
 using nsResourceGenerator;
 using nsResourceStorage;
-using nsSpriteParent;
+using nsColorable;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using nsBuilding;
 
 namespace nsGhostBuilding
 {
     public class GhostBuilding : MonoBehaviour
     {
+        [SerializeField] private Buildings _buildings;
         [SerializeField] private ResourceStorage _resourceStorage;
-        [SerializeField] private BuildingTypes _buildingTypes;
         [SerializeField] private BuildingPlacer _buildingPlacer;
         [SerializeField] private ColorValue _resourceNodeHighlightColor;
         [SerializeField] private ColorValue _overlappingColliderColor;
@@ -25,16 +25,18 @@ namespace nsGhostBuilding
         [SerializeField] private ColorValue _disabledForBuildingColor;
         [SerializeField] private float _tooltipDelay;
 
-        private Dictionary<BuildingType, ResourceGenerator> _resourceGeneratorGhosts;
-        private ResourceGenerator _currentResourceGeneratorGhost;
-        private BuildingType _currentBuildingType;
         private MousePositionHelper _mousePositionHelper;
         private Vector3 _mousePosition;
 
-        private HashSet<SpriteParent> _cachedColorables;
+        private Dictionary<Building, Building> _buildingGhosts;
+        private Building _currentBuildingGhost;
+        private Building _currentBuilding;
+        private ResourceGenerator _resourceGenerator;
+
         private HashSet<Collider2D> _overlappingColliders;
-        private HashSet<SpriteParent> _colorableColliders;
-        private HashSet<SpriteParent> _resourceNodes;
+        private HashSet<Colorable> _colorableColliders;
+        private HashSet<Colorable> _cachedColorables;
+        private HashSet<Colorable> _resourceNodes;
 
         private bool _isSpaceEmpty;
         private bool _isAffordable;
@@ -46,62 +48,55 @@ namespace nsGhostBuilding
 
         public event Action<string, float> OnBuildOrderError;
 
-        private void OnEnable()
+        private void BuildingPlacer_OnCurrentBuildingChange(Building building)
         {
-            _buildingPlacer.OnCurrentBuildingTypeChange += BuildingPlacer_OnCurrentBuildingTypeChange;
-        }
-
-        private void OnDisable()
-        {
-            _buildingPlacer.OnCurrentBuildingTypeChange -= BuildingPlacer_OnCurrentBuildingTypeChange;
-        }
-
-        private void BuildingPlacer_OnCurrentBuildingTypeChange(BuildingType buildingType)
-        {
-            _currentBuildingType = buildingType;
-            if (_currentResourceGeneratorGhost != null)
+            _currentBuilding = building;
+            if (_currentBuildingGhost != null)
             {
-                foreach (SpriteParent colorable in _cachedColorables)
+                foreach (Colorable colorable in _cachedColorables)
                 {
-                    colorable.ApplyColor(null);
+                    colorable.ChangeColor(null);
                 }
                 _cachedColorables.Clear();
-                _currentResourceGeneratorGhost.gameObject.SetActive(false);
+                _currentBuildingGhost.gameObject.SetActive(false);
             }
-            if (_currentBuildingType != null)
+            if (building != null)
             {
                 if (_mousePositionHelper != null) transform.position = _mousePositionHelper.MouseWorldPosition;
-                _currentResourceGeneratorGhost = _resourceGeneratorGhosts[buildingType];
-                _currentResourceGeneratorGhost.gameObject.SetActive(true);
+                _currentBuildingGhost = _buildingGhosts[building];
+                _currentBuildingGhost.gameObject.SetActive(true);
                 _buildingPlacer.SetBuildingCirclesActiveAll(true);
+                gameObject.SetActive(true);
             }
             else
             {
+                _currentBuildingGhost = null;
                 _buildingPlacer.SetBuildingCirclesActiveAll(false);
+                gameObject.SetActive(false);
             }
         }
 
         private void Awake()
         {
-            _resourceGeneratorGhosts = new Dictionary<BuildingType, ResourceGenerator>();
-            _currentBuildingType = null;
+            _buildingGhosts = new Dictionary<Building, Building>();
             _mousePositionHelper = null;
+            _currentBuildingGhost = null;
+            _currentBuilding = null;
 
-            _cachedColorables = new HashSet<SpriteParent>();
             _overlappingColliders = new HashSet<Collider2D>();
-            _colorableColliders = new HashSet<SpriteParent>();
-            _resourceNodes = new HashSet<SpriteParent>();
+            _colorableColliders = new HashSet<Colorable>();
+            _cachedColorables = new HashSet<Colorable>();
+            _resourceNodes = new HashSet<Colorable>();
 
-            foreach (BuildingType buildingType in _buildingTypes.List)
+            foreach (Building building in _buildings.List)
             {
-                ResourceGenerator resourceGeneratorGhost = Instantiate(buildingType.ResourceGenerator, transform, false);
-                _resourceGeneratorGhosts[buildingType] = resourceGeneratorGhost;
-                resourceGeneratorGhost.SetColliderTrigger(true);
-                resourceGeneratorGhost.SetNodeDetectionCircleActive(true);
-                resourceGeneratorGhost.SetAntiBuildingColliderActive(false);
-                resourceGeneratorGhost.SetHealthActive(false);
-                resourceGeneratorGhost.gameObject.SetActive(false);
+                Building newBuilding = Instantiate(building, transform, false);
+                _buildingGhosts[building] = newBuilding;
+                newBuilding.BecomeGhost();
+                newBuilding.gameObject.SetActive(false);
             }
+
+            _buildingPlacer.OnCurrentBuildingChange += BuildingPlacer_OnCurrentBuildingChange;
         }
 
         private void Start()
@@ -111,46 +106,47 @@ namespace nsGhostBuilding
 
         private void Update()
         {
-            if (_currentBuildingType == null) return;
+            if (_currentBuilding == null) return;
 
             _mousePosition = _mousePositionHelper.MouseWorldPosition;
             transform.position = _mousePosition;
 
             //Set colors to nodes and colliders
-            _resourceNodes = _currentResourceGeneratorGhost.FindNearbyResourceNodes();
-            _overlappingColliders = _currentResourceGeneratorGhost.GetOverlappingColliders();
+            _resourceGenerator = _currentBuildingGhost as ResourceGenerator;
+            _resourceNodes = _resourceGenerator == null ? new HashSet<Colorable>() : _resourceGenerator.FindNearbyResourceNodes();
+            _overlappingColliders = _currentBuildingGhost.GetOverlappingColliders();
             _isSpaceEmpty = _overlappingColliders.Count == 0;
 
             _colorableColliders.Clear();
             foreach (Collider2D collider in _overlappingColliders)
             {
-                AntiBuildingColliderPainter antiBuildingColliderPainter = collider.GetComponent<AntiBuildingColliderPainter>();
-                if (antiBuildingColliderPainter != null) _colorableColliders.Add(antiBuildingColliderPainter.SpriteParent);
+                IColorableCarrier colorableCarrier = collider.GetComponent<IColorableCarrier>();
+                if (colorableCarrier != null) _colorableColliders.Add(colorableCarrier.Colorable);
             }
 
             _resourceNodes.ExceptWith(_colorableColliders);
             _cachedColorables.ExceptWith(_resourceNodes);
             _cachedColorables.ExceptWith(_colorableColliders);
-            foreach (SpriteParent colorable in _resourceNodes)
+            foreach (Colorable colorable in _resourceNodes)
             {
-                colorable.ApplyColor(_resourceNodeHighlightColor);
+                colorable.ChangeColor(_resourceNodeHighlightColor);
             }
-            foreach (SpriteParent colorable in _colorableColliders)
+            foreach (Colorable colorable in _colorableColliders)
             {
-                colorable.ApplyColor(_overlappingColliderColor);
+                colorable.ChangeColor(_overlappingColliderColor);
             }
-            foreach (SpriteParent colorable in _cachedColorables)
+            foreach (Colorable colorable in _cachedColorables)
             {
-                colorable.ApplyColor(null);
+                colorable.ChangeColor(null);
             }
             _cachedColorables = _resourceNodes;
             _cachedColorables.UnionWith(_colorableColliders);
 
             //Set color to the building prefab
-            _isAffordable = _resourceStorage.IsAffordable(_currentBuildingType);
-            _isWithinPylonRange = _currentResourceGeneratorGhost.IsWithinPylonRange();
+            _isAffordable = _resourceStorage.IsAffordable(_currentBuilding);
+            _isWithinPylonRange = _currentBuildingGhost.IsWithinPylonRange();
             _isCurrentlyBuildable = _isSpaceEmpty && _isAffordable && _isWithinPylonRange;
-            _currentResourceGeneratorGhost.ApplyColor(_isCurrentlyBuildable ? _enabledForBuildingColor : _disabledForBuildingColor);
+            _currentBuildingGhost.ChangeColor(_isCurrentlyBuildable ? _enabledForBuildingColor : _disabledForBuildingColor);
 
             //Build order
             _isLMBDown = Input.GetMouseButtonDown(0);
@@ -161,7 +157,7 @@ namespace nsGhostBuilding
                 //_isCurrentlyBuildable = _isSpaceEmpty && _isAffordable && _isWithinPylonRange;
                 if (_isCurrentlyBuildable)
                 {
-                    _resourceStorage.TakeResources(_currentBuildingType);
+                    _resourceStorage.TakeResources(_currentBuilding);
                     _buildingPlacer.PlaceBuilding(_mousePosition);
                 }
                 else

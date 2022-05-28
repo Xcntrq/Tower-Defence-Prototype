@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40c055ec9e6832848b144b61c0cfd548, type: 3}
   m_Name: GhostDisabled
   m_EditorClassIdentifier: 
-  _value: {r: 1, g: 0, b: 0, a: 0.49803922}
+  _value: {r: 1, g: 0, b: 0, a: 0.78431374}

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd08982c1096ebc449656760cad45acc, type: 3}
+  m_Name: GeneratorGold
+  m_EditorClassIdentifier: 
+  _name: Gold Mine
+  _sprite: {fileID: 21300000, guid: a02d934633803124a89456e505e55cac, type: 3}
+  _keyCode: 51
+  _maxHealth: 100
+  _actionRadius: 4
+  _resourceGenerator: {fileID: 7865257973505090126, guid: ef0173b2807bc2c4ca9c0b74c7d14cd0, type: 3}
+  _resourceGeneratorData: {fileID: 0}
+  _resourceCosts:
+  - _resourceType: {fileID: 11400000, guid: dc1f9caca0c54e548802e7666787e39c, type: 2}
+    _value: 600
+  - _resourceType: {fileID: 11400000, guid: 788020552458df24a8ce9adc53a75f43, type: 2}
+    _value: 200
