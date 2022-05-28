@@ -1,10 +1,10 @@
 using nsResourceType;
-using nsSpriteParent;
+using nsColorable;
 using UnityEngine;
 
 namespace nsResourceNode
 {
-    public class ResourceNode : SpriteParent
+    public class ResourceNode : Colorable
     {
         [SerializeField] private ResourceType _resourceType;
 

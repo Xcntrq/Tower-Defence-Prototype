@@ -43,6 +43,10 @@ namespace nsHealthBar
             }
             Vector3 newLocalScale = _valueBar.localScale;
             newLocalScale.x = valueNormalized;
+            //If the enemy is looking left, the bar will go the other way because of the negative scale
+            Vector2 newPivot = _valueBar.pivot;
+            newPivot.x = _health.transform.localScale.x < 0 ? 1 : 0;
+            _valueBar.pivot = newPivot;
             _valueBar.localScale = newLocalScale;
             gameObject.SetActive(true);
         }

@@ -1,7 +1,8 @@
-using nsBuildingType;
-using nsBuildingTypes;
+using nsBuilding;
+using nsBuildings;
 using nsResourceGenerator;
 using nsResourceStorage;
+using nsTower;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,36 +11,36 @@ namespace nsBuildingPlacer
 {
     public class BuildingPlacer : MonoBehaviour
     {
-        [SerializeField] private BuildingTypes _buildingTypes;
+        [SerializeField] private Buildings _buildings;
         [SerializeField] private ResourceStorage _resourceStorage;
 
-        private HashSet<ResourceGenerator> _placedResourceGenerators;
+        private HashSet<Building> _placedBuildings;
+        private Building _currentBuilding;
         private bool _areBuildingCirclesActive;
-        private BuildingType _currentBuildingType;
 
-        public HashSet<ResourceGenerator> PlacedResourceGenerators
+        public HashSet<Building> PlacedBuildings
         {
             get
             {
-                if (_placedResourceGenerators == null) _placedResourceGenerators = new HashSet<ResourceGenerator>();
-                return _placedResourceGenerators;
+                if (_placedBuildings == null) _placedBuildings = new HashSet<Building>();
+                return _placedBuildings;
             }
         }
 
-        public BuildingType CurrentBuildingType
+        public Building CurrentBuilding
         {
             get
             {
-                return _currentBuildingType;
+                return _currentBuilding;
             }
             set
             {
-                _currentBuildingType = _currentBuildingType == value ? null : value;
-                OnCurrentBuildingTypeChange?.Invoke(_currentBuildingType);
+                _currentBuilding = _currentBuilding == value ? null : value;
+                OnCurrentBuildingChange?.Invoke(_currentBuilding);
             }
         }
 
-        public event Action<BuildingType> OnCurrentBuildingTypeChange;
+        public event Action<Building> OnCurrentBuildingChange;
 
         private void Awake()
         {
@@ -48,40 +49,47 @@ namespace nsBuildingPlacer
 
         private void Start()
         {
-            CurrentBuildingType = _buildingTypes.List[0];
+            CurrentBuilding = _buildings.List[0];
             PlaceBuilding(Vector3.zero);
-            CurrentBuildingType = null;
+            CurrentBuilding = null;
         }
 
         private void Update()
         {
-            foreach (BuildingType buildingType in _buildingTypes.List)
+            foreach (Building building in _buildings.List)
             {
-                bool isKeyPressed = Input.GetKeyDown(buildingType.KeyCode);
-                if (isKeyPressed) CurrentBuildingType = buildingType;
+                bool isKeyPressed = Input.GetKeyDown(building.BuildingType.KeyCode);
+                if (isKeyPressed) CurrentBuilding = building;
             }
 
             bool isRMBDown = Input.GetMouseButtonDown(1);
             if (Input.GetKeyDown(KeyCode.Escape) || isRMBDown)
             {
-                CurrentBuildingType = null;
+                CurrentBuilding = null;
             }
         }
 
         public void PlaceBuilding(Vector3 position)
         {
-            ResourceGenerator resourceGenerator = Instantiate(CurrentBuildingType.ResourceGenerator, position, Quaternion.identity, transform);
-            resourceGenerator.Initialize(_resourceStorage, this);
-            PlacedResourceGenerators.Add(resourceGenerator);
+            if (CurrentBuilding == null) return;
+            Building building = Instantiate(CurrentBuilding, position, Quaternion.identity, transform);
+            if (building is ResourceGenerator) (building as ResourceGenerator).Initialize(this, _resourceStorage);
+            if (building is Tower) building.Initialize(this);
+            PlacedBuildings.Add(building);
             SetBuildingCirclesActiveAll(_areBuildingCirclesActive);
+        }
+
+        public void ForgetBuilding(Building building)
+        {
+            PlacedBuildings.Remove(building);
         }
 
         public void SetBuildingCirclesActiveAll(bool value)
         {
             _areBuildingCirclesActive = value;
-            foreach (ResourceGenerator resourceGenerator in PlacedResourceGenerators)
+            foreach (Building building in PlacedBuildings)
             {
-                resourceGenerator.SetBuildingCirclesActive(value);
+                building.SetBuildingCirclesActive(value);
             }
         }
     }

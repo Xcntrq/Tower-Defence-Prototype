@@ -1,4 +1,4 @@
-using nsResourceGenerator;
+using nsIHealthCarrier;
 using System;
 using UnityEngine;
 
@@ -6,10 +6,11 @@ namespace nsHealth
 {
     public class Health : MonoBehaviour
     {
-        [SerializeField] private ResourceGenerator _resourceGenerator;
+        [SerializeField] private MonoBehaviour _iHealthCarrier;
 
         private int _value;
         private int _maxValue;
+        private IHealthCarrier _healthCarrier;
 
         public float ValueNormalized => (float)_value / _maxValue;
 
@@ -17,12 +18,12 @@ namespace nsHealth
 
         private void Awake()
         {
-            _resourceGenerator.OnSetHealthActive += (bool value) => { enabled = value; };
+            _healthCarrier = _iHealthCarrier as IHealthCarrier;
         }
 
         private void Start()
         {
-            _maxValue = _resourceGenerator.BuildingType.MaxHealth;
+            _maxValue = _healthCarrier.MaxHealth;
             _value = _maxValue;
             OnValueChange?.Invoke(ValueNormalized);
         }

@@ -13,16 +13,14 @@ namespace nsBuildingType
         [SerializeField] private Sprite _sprite;
         [SerializeField] private KeyCode _keyCode;
         [SerializeField] private int _maxHealth;
-        [SerializeField] private ResourceGenerator _resourceGenerator;
-        [SerializeField] private ResourceGeneratorData _resourceGeneratorData;
+        [SerializeField] private float _actionRadius;
         [SerializeField] private List<ResourceCost> _resourceCosts;
 
         public string Name => _name;
         public Sprite Sprite => _sprite;
         public KeyCode KeyCode => _keyCode;
         public int MaxHealth => _maxHealth;
-        public ResourceGenerator ResourceGenerator => _resourceGenerator;
-        public ResourceGeneratorData ResourceGeneratorData => _resourceGeneratorData;
+        public float ActionRadius => _actionRadius;
         public List<ResourceCost> ResourceCosts => _resourceCosts;
     }
 }
