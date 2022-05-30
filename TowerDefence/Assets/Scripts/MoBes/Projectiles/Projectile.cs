@@ -42,7 +42,7 @@ namespace nsProjectile
             {
                 Destroy(gameObject, _projectileData.TimeToLive);
             }
-            _rigidbody2D.velocity = _projectileData.Speed * _direction;
+            _rigidbody2D.velocity = _direction * _projectileData.Speed;
             _rotation.z = Mathf.Rad2Deg * Mathf.Atan2(_direction.y, _direction.x);
             _transform.eulerAngles = _rotation;
         }

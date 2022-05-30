@@ -6,6 +6,7 @@ using UnityEngine;
 using nsBuilding;
 using nsIHealthCarrier;
 using nsEnemyData;
+using nsEnemySpawner;
 
 namespace nsEnemy
 {
@@ -15,16 +16,25 @@ namespace nsEnemy
         [SerializeField] private EnemyData _enemyData;
         [SerializeField] private Transform _aim;
 
+        private EnemySpawner _enemySpawner;
         private Rigidbody2D _rigidbody2D;
         private Transform _transform;
         private Transform _target;
         private Vector3 _direction;
+        private bool _isInitialized;
 
         private Vector3 _defaultScale;
         private Vector3 _invertedScale;
 
         public Transform Aim => _aim;
         public int MaxHealth => _enemyData.MaxHealth;
+
+        public void Initialize(BuildingPlacer buildingPlacer, EnemySpawner enemySpawner)
+        {
+            _buildingPlacer = buildingPlacer;
+            _enemySpawner = enemySpawner;
+            _isInitialized = true;
+        }
 
         private void Awake()
         {
@@ -41,10 +51,16 @@ namespace nsEnemy
 
         private void FixedUpdate()
         {
+            if (!_isInitialized) return;
             if (_target == null) return;
             _direction = (_target.position - _transform.position).normalized;
             _rigidbody2D.velocity = _direction * _enemyData.Speed;
             _transform.localScale = _direction.x >= 0 ? _defaultScale : _invertedScale;
+        }
+
+        private void OnDestroy()
+        {
+            if (_enemySpawner != null) _enemySpawner.ForgetEnemy(this);
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -67,6 +83,8 @@ namespace nsEnemy
 
             while (true)
             {
+                if (!_isInitialized) yield return waitForSeconds;
+
                 if (_target == null)
                 {
                     Transform newTarget = null;
