@@ -1,64 +1,95 @@
-using nsBuildingType;
-using nsBuildingTypes;
-using nsMousePositionHelper;
+using nsBuilding;
+using nsBuildings;
 using nsResourceGenerator;
 using nsResourceStorage;
+using nsTower;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace nsBuildingPlacer
 {
     public class BuildingPlacer : MonoBehaviour
     {
-        [SerializeField] private BuildingTypes _buildingTypes;
+        [SerializeField] private Buildings _buildings;
         [SerializeField] private ResourceStorage _resourceStorage;
 
-        private MousePositionHelper _mousePositionHelper;
-        private BuildingType _currentBuildingType;
+        private HashSet<Building> _placedBuildings;
+        private Building _currentBuilding;
+        private bool _areBuildingCirclesActive;
 
-        public BuildingType CurrentBuildingType
+        public HashSet<Building> PlacedBuildings
         {
             get
             {
-                return _currentBuildingType;
-            }
-            set
-            {
-                _currentBuildingType = _currentBuildingType == value ? null : value;
-                OnCurrentBuildingTypeChange?.Invoke(_currentBuildingType);
+                if (_placedBuildings == null) _placedBuildings = new HashSet<Building>();
+                return _placedBuildings;
             }
         }
 
-        public Action<BuildingType> OnCurrentBuildingTypeChange;
+        public Building CurrentBuilding
+        {
+            get
+            {
+                return _currentBuilding;
+            }
+            set
+            {
+                _currentBuilding = _currentBuilding == value ? null : value;
+                OnCurrentBuildingChange?.Invoke(_currentBuilding);
+            }
+        }
+
+        public event Action<Building> OnCurrentBuildingChange;
+
+        private void Awake()
+        {
+            _areBuildingCirclesActive = false;
+        }
 
         private void Start()
         {
-            _mousePositionHelper = new MousePositionHelper(Camera.main);
-            CurrentBuildingType = null;
+            CurrentBuilding = _buildings.List[0];
+            PlaceBuilding(Vector3.zero);
+            CurrentBuilding = null;
         }
 
         private void Update()
         {
-            bool isLMBDown = Input.GetMouseButtonDown(0);
+            foreach (Building building in _buildings.List)
+            {
+                bool isKeyPressed = Input.GetKeyDown(building.BuildingType.KeyCode);
+                if (isKeyPressed) CurrentBuilding = building;
+            }
+
             bool isRMBDown = Input.GetMouseButtonDown(1);
-            bool isPointerOverGameObject = EventSystem.current.IsPointerOverGameObject();
-
-            if (isLMBDown && (CurrentBuildingType != null) && !isPointerOverGameObject)
-            {
-                ResourceGenerator resourceGenerator = Instantiate(CurrentBuildingType.ResourceGenerator, _mousePositionHelper.MouseWorldPosition, Quaternion.identity, transform);
-                resourceGenerator.Initialize(_resourceStorage);
-            }
-
-            foreach (BuildingType buildingType in _buildingTypes.List)
-            {
-                bool isKeyPressed = Input.GetKeyDown(buildingType.KeyCode);
-                if (isKeyPressed) CurrentBuildingType = buildingType;
-            }
-
             if (Input.GetKeyDown(KeyCode.Escape) || isRMBDown)
             {
-                CurrentBuildingType = null;
+                CurrentBuilding = null;
+            }
+        }
+
+        public void PlaceBuilding(Vector3 position)
+        {
+            if (CurrentBuilding == null) return;
+            Building building = Instantiate(CurrentBuilding, position, Quaternion.identity, transform);
+            if (building is ResourceGenerator) (building as ResourceGenerator).Initialize(this, _resourceStorage);
+            if (building is Tower) building.Initialize(this);
+            PlacedBuildings.Add(building);
+            SetBuildingCirclesActiveAll(_areBuildingCirclesActive);
+        }
+
+        public void ForgetBuilding(Building building)
+        {
+            PlacedBuildings.Remove(building);
+        }
+
+        public void SetBuildingCirclesActiveAll(bool value)
+        {
+            _areBuildingCirclesActive = value;
+            foreach (Building building in PlacedBuildings)
+            {
+                building.SetBuildingCirclesActive(value);
             }
         }
     }

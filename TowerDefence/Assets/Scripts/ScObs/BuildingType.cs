@@ -1,5 +1,7 @@
+using nsResourceCost;
 using nsResourceGenerator;
 using nsResourceGeneratorData;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace nsBuildingType
@@ -10,12 +12,15 @@ namespace nsBuildingType
         [SerializeField] private string _name;
         [SerializeField] private Sprite _sprite;
         [SerializeField] private KeyCode _keyCode;
-        [SerializeField] private ResourceGenerator _resourceGenerator;
-        [SerializeField] private ResourceGeneratorData _resourceGeneratorData;
+        [SerializeField] private int _maxHealth;
+        [SerializeField] private float _actionRadius;
+        [SerializeField] private List<ResourceCost> _resourceCosts;
 
+        public string Name => _name;
         public Sprite Sprite => _sprite;
         public KeyCode KeyCode => _keyCode;
-        public ResourceGenerator ResourceGenerator => _resourceGenerator;
-        public ResourceGeneratorData ResourceGeneratorData => _resourceGeneratorData;
+        public int MaxHealth => _maxHealth;
+        public float ActionRadius => _actionRadius;
+        public List<ResourceCost> ResourceCosts => _resourceCosts;
     }
 }

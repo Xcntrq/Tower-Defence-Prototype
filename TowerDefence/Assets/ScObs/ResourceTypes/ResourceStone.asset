@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _name: Stone
   _sprite: {fileID: 21300000, guid: acee00ec46454e14fb17fd6030fbaba1, type: 3}
+  _color: {fileID: 11400000, guid: 602e1040bf44b504184fd5df79c588e5, type: 2}
+  _amountAtStart: 0

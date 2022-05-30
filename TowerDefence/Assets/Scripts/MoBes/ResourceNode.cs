@@ -1,21 +1,13 @@
-using nsColorValue;
 using nsResourceType;
-using System;
+using nsColorable;
 using UnityEngine;
 
 namespace nsResourceNode
 {
-    public class ResourceNode : MonoBehaviour
+    public class ResourceNode : Colorable
     {
         [SerializeField] private ResourceType _resourceType;
 
         public ResourceType ResourceType => _resourceType;
-
-        public Action<ColorValue> OnColorChange;
-
-        public void ChangeColor(ColorValue colorValue)
-        {
-            OnColorChange?.Invoke(colorValue);
-        }
     }
 }

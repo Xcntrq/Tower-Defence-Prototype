@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: StoneColors
   m_EditorClassIdentifier: 
   _items:
-  - {fileID: 11400000, guid: 556a2d588a5442a40bc1133932393a61, type: 2}
+  - {fileID: 11400000, guid: 775ebbb2315fb7b488b3e93a99c2e762, type: 2}
