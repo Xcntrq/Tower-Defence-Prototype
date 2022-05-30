@@ -45,6 +45,8 @@ namespace nsGhostBuilding
         private bool _isPointerOverGameObject;
         private bool _isLMBDown;
         private string _text;
+        private bool _wasOutOfBounds;
+        private bool _isOutOfBounds;
 
         public event Action<string, float> OnBuildOrderError;
 
@@ -106,7 +108,12 @@ namespace nsGhostBuilding
 
         private void Update()
         {
-            if (_currentBuilding == null) return;
+            _isOutOfBounds = (Input.mousePosition.x < 0) || (Input.mousePosition.y < 0) || (Input.mousePosition.x >= Screen.width) || (Input.mousePosition.y >= Screen.height);
+            if (_isOutOfBounds || (_currentBuilding == null) || _wasOutOfBounds)
+            {
+                _wasOutOfBounds = _isOutOfBounds;
+                return;
+            }
 
             _mousePosition = _mousePositionHelper.MouseWorldPosition;
             transform.position = _mousePosition;

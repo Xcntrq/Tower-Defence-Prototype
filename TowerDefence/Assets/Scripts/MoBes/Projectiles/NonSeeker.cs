@@ -1,5 +1,4 @@
 using nsProjectile;
-using UnityEngine;
 
 namespace nsNonSeeker
 {
