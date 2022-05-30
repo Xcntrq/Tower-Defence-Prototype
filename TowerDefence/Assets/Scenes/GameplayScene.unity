@@ -1982,7 +1982,7 @@ MonoBehaviour:
   _seed: {fileID: 11400000, guid: dda94388aa7949b4f9d9d028eceb481a, type: 2}
   _enemy: {fileID: 7404458357079978439, guid: 59f7526aa7329374796ee629a0ba24b2, type: 3}
   _spawnRadius: 5
-  _cooldownTime: 4
+  _cooldownTime: 10
   _spawnInterval: 0.5
 --- !u!4 &935788350 stripped
 Transform:

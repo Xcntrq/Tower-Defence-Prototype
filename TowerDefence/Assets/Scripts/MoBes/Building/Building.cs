@@ -79,7 +79,7 @@ namespace nsBuilding
         {
             bool isWithinPylonRange = false;
             Vector2 point = (Vector2)transform.position + _collider2D.offset;
-            Collider2D[] allOverlappingColliders = Physics2D.OverlapCircleAll(point, _buildingDistance.Max);
+            Collider2D[] allOverlappingColliders = Physics2D.OverlapCircleAll(point, _buildingDistance.Max - 1);
             foreach (Collider2D collider in allOverlappingColliders)
             {
                 Building building = collider.GetComponent<Building>();

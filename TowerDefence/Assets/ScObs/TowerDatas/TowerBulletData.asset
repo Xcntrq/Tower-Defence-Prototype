@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: TowerBulletData
   m_EditorClassIdentifier: 
   _searchCooldown: 0.5
-  _attackCooldown: 0.05
+  _attackCooldown: 0.1
