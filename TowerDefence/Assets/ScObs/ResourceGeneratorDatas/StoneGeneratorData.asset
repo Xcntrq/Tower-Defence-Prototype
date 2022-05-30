@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5cb47f6a8a34ed45b92dc92d01c016e, type: 3}
   m_Name: StoneGeneratorData
   m_EditorClassIdentifier: 
+  _ticksInCycle: 11
   _amountPerCycle: 20
-  _cycleTime: 15
-  _nodeDetectionRadius: 4
   _resourceType: {fileID: 11400000, guid: 788020552458df24a8ce9adc53a75f43, type: 2}

@@ -10,9 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5cb47f6a8a34ed45b92dc92d01c016e, type: 3}
-  m_Name: GoldGeneratorData
+  m_Name: WoodGeneratorData
   m_EditorClassIdentifier: 
-  _amountPerCycle: 10
-  _cycleTime: 20
-  _nodeDetectionRadius: 4
-  _resourceType: {fileID: 11400000, guid: 03c70fa4f5eeff741aefe6985ae5a04b, type: 2}
+  _ticksInCycle: 7
+  _amountPerCycle: 40
+  _resourceType: {fileID: 11400000, guid: dc1f9caca0c54e548802e7666787e39c, type: 2}
