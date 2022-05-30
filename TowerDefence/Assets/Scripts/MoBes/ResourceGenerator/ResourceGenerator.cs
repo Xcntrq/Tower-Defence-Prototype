@@ -7,6 +7,7 @@ using nsColorable;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using nsTimeTicker;
 
 namespace nsResourceGenerator
 {
@@ -16,19 +17,22 @@ namespace nsResourceGenerator
 
         private NearbyResourceNodeFinder _nearbyResourceNodeFinder;
         private ResourceStorage _resourceStorage;
+        private TimeTicker _timeTicker;
 
-        private float _timeLeft;
-        private float _cycleTime;
         private int _nearbyResourceNodeCount;
         private int _totalAmountPerCycle;
+        private float _inverseLimit;
 
         public event Action<int, int> OnOverlapCircleAll;
+        public event Action<float> OnProgressChange;
         public event Action<int> OnGetToWork;
 
-        public void Initialize(BuildingPlacer buildingPlacer, ResourceStorage resourceStorage)
+        public void Initialize(BuildingPlacer buildingPlacer, ResourceStorage resourceStorage, TimeTicker timeTicker)
         {
             Initialize(buildingPlacer);
 
+            _timeTicker = timeTicker;
+            _timeTicker.OnTick += TimeTicker_OnTick;
             _resourceStorage = resourceStorage;
             FindNearbyResourceNodes();
             if (_nearbyResourceNodeCount > 0) OnGetToWork?.Invoke(_nearbyResourceNodeCount);
@@ -39,10 +43,9 @@ namespace nsResourceGenerator
             base.Awake();
 
             _nearbyResourceNodeFinder = new NearbyResourceNodeFinder();
-            _cycleTime = _resourceGeneratorData.CycleTime;
-            _timeLeft = _cycleTime;
-            _totalAmountPerCycle = 0;
+            _inverseLimit = 1f / (_resourceGeneratorData.TicksInCycle - 1);
             _nearbyResourceNodeCount = 0;
+            _totalAmountPerCycle = 0;
         }
 
         protected override void Start()
@@ -52,16 +55,11 @@ namespace nsResourceGenerator
             OnOverlapCircleAll?.Invoke(_nearbyResourceNodeCount, _totalAmountPerCycle);
         }
 
-        private void Update()
+        private void TimeTicker_OnTick(ResourceGeneratorData resourceGeneratorData, int tick)
         {
-            if (!_isInitialized) return;
-
-            _timeLeft -= Time.deltaTime;
-            if (_timeLeft <= 0)
-            {
-                _timeLeft += _cycleTime;
-                _resourceStorage.AddResource(_resourceGeneratorData.ResourceType, _totalAmountPerCycle);
-            }
+            if (_resourceGeneratorData != resourceGeneratorData) return;
+            if (tick == 0) _resourceStorage.AddResource(_resourceGeneratorData.ResourceType, _totalAmountPerCycle);
+            OnProgressChange?.Invoke(tick * _inverseLimit);
         }
 
         public HashSet<Colorable> FindNearbyResourceNodes()

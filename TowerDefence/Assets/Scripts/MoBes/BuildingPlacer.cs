@@ -2,6 +2,7 @@ using nsBuilding;
 using nsBuildings;
 using nsResourceGenerator;
 using nsResourceStorage;
+using nsTimeTicker;
 using nsTower;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace nsBuildingPlacer
     {
         [SerializeField] private Buildings _buildings;
         [SerializeField] private ResourceStorage _resourceStorage;
+        [SerializeField] private TimeTicker _timeTicker;
 
         private HashSet<Building> _placedBuildings;
         private Building _currentBuilding;
@@ -73,7 +75,7 @@ namespace nsBuildingPlacer
         {
             if (CurrentBuilding == null) return;
             Building building = Instantiate(CurrentBuilding, position, Quaternion.identity, transform);
-            if (building is ResourceGenerator) (building as ResourceGenerator).Initialize(this, _resourceStorage);
+            if (building is ResourceGenerator) (building as ResourceGenerator).Initialize(this, _resourceStorage, _timeTicker);
             if (building is Tower) building.Initialize(this);
             PlacedBuildings.Add(building);
             SetBuildingCirclesActiveAll(_areBuildingCirclesActive);
