@@ -1,6 +1,6 @@
 using nsBuildingButtonsDisplay;
 using nsColorValue;
-using nsMouseEnterExit;
+using nsPointerEnterExit;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,7 +35,7 @@ namespace nsResourceCostDisplay
             bool isCached = _cachedPositions.ContainsKey(sender);
             if (!isCached)
             {
-                RectTransform buttonRectTransform = (sender as MouseEnterExit).GetComponent<RectTransform>();
+                RectTransform buttonRectTransform = (sender as PointerEnterExit).GetComponent<RectTransform>();
                 anchoredPosition = buttonRectTransform.anchoredPosition;
                 anchoredPosition.y += e.PanelRectTransform.rect.height;
                 _cachedPositions[sender] = anchoredPosition;

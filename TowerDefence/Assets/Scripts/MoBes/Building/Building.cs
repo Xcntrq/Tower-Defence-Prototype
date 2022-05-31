@@ -6,6 +6,8 @@ using System;
 using UnityEngine;
 using nsBuildingPlacer;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
+using nsResourceStorage;
 
 namespace nsBuilding
 {
@@ -14,12 +16,14 @@ namespace nsBuilding
         [SerializeField] private BuildingDistance _buildingDistance;
         [SerializeField] private BuildingType _buildingType;
 
+        protected ResourceStorage _resourceStorage;
         private BuildingPlacer _buildingPlacer;
         private Collider2D _collider2D;
         protected bool _isInitialized;
 
         public int MaxHealth => _buildingType.MaxHealth;
         public BuildingType BuildingType => _buildingType;
+        public ResourceStorage ResourceStorage => _resourceStorage;
 
         //Building Circles
         public event Action<BuildingDistance> OnBuildingCirclesDistanceChange;
@@ -32,8 +36,13 @@ namespace nsBuilding
         //Anti-Building Collider
         public event Action<bool> OnAntiBuildingColliderToggle;
 
-        public void Initialize(BuildingPlacer buildingPlacer)
+        //Deconstruct Button
+        public event Action<PointerEventData> OnMouseEnterCustom;
+        public event Action<PointerEventData> OnMouseExitCustom;
+
+        public void Initialize(BuildingPlacer buildingPlacer, ResourceStorage resourceStorage)
         {
+            _resourceStorage = resourceStorage;
             _buildingPlacer = buildingPlacer;
             _isInitialized = true;
         }
@@ -50,9 +59,19 @@ namespace nsBuilding
             OnActionRadiusChange?.Invoke(_buildingType.ActionRadius);
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if (_buildingPlacer != null) _buildingPlacer.ForgetBuilding(this);
+        }
+
+        private void OnMouseEnter()
+        {
+            if (_isInitialized) OnMouseEnterCustom?.Invoke(null);
+        }
+
+        private void OnMouseExit()
+        {
+            if (_isInitialized) OnMouseExitCustom?.Invoke(null);
         }
 
         public void BecomeGhost()
