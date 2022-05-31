@@ -2,7 +2,7 @@ using nsBuilding;
 using nsBuildingPlacer;
 using nsBuildings;
 using nsBuildingType;
-using nsMouseEnterExit;
+using nsPointerEnterExit;
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -72,8 +72,8 @@ namespace nsBuildingButtonsDisplay
                 newItem.GetComponentInChildren<TextMeshProUGUI>().SetText(index++.ToString());
                 newItem.GetComponent<Button>().onClick.AddListener(() => { _buildingPlacer.CurrentBuilding = building; });
                 MouseEnterEventArgs mouseEnterEventArgs = new() { BuildingType = building.BuildingType, PanelRectTransform = GetComponent<RectTransform>() };
-                newItem.GetComponent<MouseEnterExit>().OnMouseEnter += (object sender, EventArgs e) => { OnMouseEnter?.Invoke(sender, mouseEnterEventArgs); };
-                newItem.GetComponent<MouseEnterExit>().OnMouseExit += (object sender, EventArgs e) => { OnMouseExit?.Invoke(); };
+                newItem.GetComponent<PointerEnterExit>().OnPointerEnterCustom += (object sender, EventArgs e) => { OnMouseEnter?.Invoke(sender, mouseEnterEventArgs); };
+                newItem.GetComponent<PointerEnterExit>().OnPointerExitCustom += (object sender, EventArgs e) => { OnMouseExit?.Invoke(); };
                 _items[building] = newItem;
             }
             _lastItem = Instantiate(_pfItem, transform);

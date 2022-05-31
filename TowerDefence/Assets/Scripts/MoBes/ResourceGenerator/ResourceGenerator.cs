@@ -16,7 +16,6 @@ namespace nsResourceGenerator
         [SerializeField] private ResourceGeneratorData _resourceGeneratorData;
 
         private NearbyResourceNodeFinder _nearbyResourceNodeFinder;
-        private ResourceStorage _resourceStorage;
         private TimeTicker _timeTicker;
 
         private int _nearbyResourceNodeCount;
@@ -29,11 +28,10 @@ namespace nsResourceGenerator
 
         public void Initialize(BuildingPlacer buildingPlacer, ResourceStorage resourceStorage, TimeTicker timeTicker)
         {
-            Initialize(buildingPlacer);
+            Initialize(buildingPlacer, resourceStorage);
 
             _timeTicker = timeTicker;
             _timeTicker.OnTick += TimeTicker_OnTick;
-            _resourceStorage = resourceStorage;
             FindNearbyResourceNodes();
             if (_nearbyResourceNodeCount > 0) OnGetToWork?.Invoke(_nearbyResourceNodeCount);
         }
@@ -53,6 +51,13 @@ namespace nsResourceGenerator
             base.Start();
 
             OnOverlapCircleAll?.Invoke(_nearbyResourceNodeCount, _totalAmountPerCycle);
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            if (_timeTicker != null) _timeTicker.OnTick -= TimeTicker_OnTick;
         }
 
         private void TimeTicker_OnTick(ResourceGeneratorData resourceGeneratorData, int tick)

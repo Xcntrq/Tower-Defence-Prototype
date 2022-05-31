@@ -76,7 +76,7 @@ namespace nsBuildingPlacer
             if (CurrentBuilding == null) return;
             Building building = Instantiate(CurrentBuilding, position, Quaternion.identity, transform);
             if (building is ResourceGenerator) (building as ResourceGenerator).Initialize(this, _resourceStorage, _timeTicker);
-            if (building is Tower) building.Initialize(this);
+            if (building is Tower) building.Initialize(this, _resourceStorage);
             PlacedBuildings.Add(building);
             SetBuildingCirclesActiveAll(_areBuildingCirclesActive);
         }
