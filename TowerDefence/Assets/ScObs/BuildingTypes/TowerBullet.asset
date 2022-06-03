@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: TowerBullet
   m_EditorClassIdentifier: 
   _name: Bullet Tower
-  _sprite: {fileID: 21300000, guid: 177fe34a47b82f141975f252251e54cc, type: 3}
+  _sprite: {fileID: 21300000, guid: 5bf543c049c6d614b84f98189686560f, type: 3}
   _keyCode: 52
   _maxHealth: 200
   _actionRadius: 12
+  _buildingTimerDelay: 1
   _resourceCosts:
   - _resourceType: {fileID: 11400000, guid: dc1f9caca0c54e548802e7666787e39c, type: 2}
     _value: 50

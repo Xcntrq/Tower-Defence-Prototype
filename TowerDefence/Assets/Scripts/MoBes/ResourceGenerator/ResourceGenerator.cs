@@ -22,7 +22,7 @@ namespace nsResourceGenerator
         private int _totalAmountPerCycle;
         private float _inverseLimit;
 
-        public event Action<int, int> OnOverlapCircleAll;
+        public event Action<string> OnOverlapCircleAll;
         public event Action<float> OnProgressChange;
         public event Action<int> OnGetToWork;
 
@@ -32,8 +32,6 @@ namespace nsResourceGenerator
 
             _timeTicker = timeTicker;
             _timeTicker.OnTick += TimeTicker_OnTick;
-            FindNearbyResourceNodes();
-            if (_nearbyResourceNodeCount > 0) OnGetToWork?.Invoke(_nearbyResourceNodeCount);
         }
 
         protected override void Awake()
@@ -44,13 +42,14 @@ namespace nsResourceGenerator
             _inverseLimit = 1f / (_resourceGeneratorData.TicksInCycle - 1);
             _nearbyResourceNodeCount = 0;
             _totalAmountPerCycle = 0;
+            _timeTicker = null;
         }
 
         protected override void Start()
         {
             base.Start();
 
-            OnOverlapCircleAll?.Invoke(_nearbyResourceNodeCount, _totalAmountPerCycle);
+            OnOverlapCircleAll?.Invoke(string.Empty);
         }
 
         protected override void OnDestroy()
@@ -62,9 +61,17 @@ namespace nsResourceGenerator
 
         private void TimeTicker_OnTick(ResourceGeneratorData resourceGeneratorData, int tick)
         {
-            if (_resourceGeneratorData != resourceGeneratorData) return;
+            if ((_buildingState != BuildingState.Working) || (_resourceGeneratorData != resourceGeneratorData)) return;
             if (tick == 0) _resourceStorage.AddResource(_resourceGeneratorData.ResourceType, _totalAmountPerCycle);
             OnProgressChange?.Invoke(tick * _inverseLimit);
+        }
+
+        protected override void StartWorking()
+        {
+            base.StartWorking();
+
+            FindNearbyResourceNodes();
+            if (_nearbyResourceNodeCount > 0) OnGetToWork?.Invoke(_nearbyResourceNodeCount);
         }
 
         public HashSet<Colorable> FindNearbyResourceNodes()
@@ -72,7 +79,8 @@ namespace nsResourceGenerator
             HashSet<Colorable> desiredNearbyResourceNodes = _nearbyResourceNodeFinder.OverlapCircleAll(transform.position, BuildingType.ActionRadius, _resourceGeneratorData.ResourceType);
             _nearbyResourceNodeCount = desiredNearbyResourceNodes.Count;
             _totalAmountPerCycle = _nearbyResourceNodeCount * _resourceGeneratorData.AmountPerCycle;
-            OnOverlapCircleAll?.Invoke(_nearbyResourceNodeCount, _totalAmountPerCycle);
+            string text = string.Concat('+', _totalAmountPerCycle, ' ', '(', _nearbyResourceNodeCount, ')');
+            OnOverlapCircleAll?.Invoke(text);
             return desiredNearbyResourceNodes;
         }
     }

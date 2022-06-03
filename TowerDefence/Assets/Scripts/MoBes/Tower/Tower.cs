@@ -16,9 +16,16 @@ namespace nsTower
 
         private Transform _target;
 
-        protected override void Start()
+        public override void SetBuildingCirclesActive(bool value)
         {
-            base.Start();
+            base.SetBuildingCirclesActive(value);
+
+            //ActionRangeCircleToggle(value);
+        }
+
+        protected override void StartWorking()
+        {
+            base.StartWorking();
 
             StartCoroutine(TargetSearch(_towerData.SearchCooldown));
             StartCoroutine(Attack(_towerData.AttackCooldown));
@@ -28,8 +35,10 @@ namespace nsTower
         {
             var waitForSeconds = new WaitForSeconds(cooldown);
 
-            while (_isInitialized)
+            while (_buildingState == BuildingState.Working)
             {
+                yield return waitForSeconds;
+
                 Collider2D[] allNearbyColliders = Physics2D.OverlapCircleAll(transform.position, BuildingType.ActionRadius);
 
                 float minDistance = float.MaxValue;
@@ -45,7 +54,6 @@ namespace nsTower
                         _target = currentTransform;
                     }
                 }
-                yield return waitForSeconds;
             }
         }
 
@@ -53,15 +61,15 @@ namespace nsTower
         {
             var waitForSeconds = new WaitForSeconds(cooldown);
 
-            while (_isInitialized)
+            while (_buildingState == BuildingState.Working)
             {
-                if (_target == null) yield return waitForSeconds;
+                yield return waitForSeconds;
+
+                if (_target == null) continue;
 
                 Projectile newProjectile = Instantiate(_projectile, transform, false);
                 newProjectile.transform.position = _projectileOrigin.transform.position;
                 newProjectile.Initialize(_target);
-
-                yield return waitForSeconds;
             }
         }
     }

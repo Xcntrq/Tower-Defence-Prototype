@@ -8,18 +8,29 @@ using nsBuildingPlacer;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using nsResourceStorage;
+using System.Collections;
 
 namespace nsBuilding
 {
+    public enum BuildingState
+    {
+        Undefined,
+        Building,
+        Working
+    }
+
     public abstract class Building : Colorable, IHealthCarrier
     {
         [SerializeField] private BuildingDistance _buildingDistance;
         [SerializeField] private BuildingType _buildingType;
+        [SerializeField] private List<Transform> _buildingBlocks;
+
+        protected BuildingState _buildingState;
+        private bool _isGhost;
 
         protected ResourceStorage _resourceStorage;
         private BuildingPlacer _buildingPlacer;
         private Collider2D _collider2D;
-        protected bool _isInitialized;
 
         public int MaxHealth => _buildingType.MaxHealth;
         public BuildingType BuildingType => _buildingType;
@@ -42,21 +53,24 @@ namespace nsBuilding
 
         public void Initialize(BuildingPlacer buildingPlacer, ResourceStorage resourceStorage)
         {
+            _isGhost = false;
             _resourceStorage = resourceStorage;
             _buildingPlacer = buildingPlacer;
-            _isInitialized = true;
+            _buildingState = BuildingState.Building;
+            StartCoroutine(StartBuilding(_buildingType.BuildingTimerDelay));
         }
 
         protected virtual void Awake()
         {
             _collider2D = GetComponent<Collider2D>();
-            _isInitialized = false;
+            _buildingState = BuildingState.Undefined;
         }
 
         protected virtual void Start()
         {
             OnBuildingCirclesDistanceChange?.Invoke(_buildingDistance);
             OnActionRadiusChange?.Invoke(_buildingType.ActionRadius);
+            SetActive(_isGhost);
         }
 
         protected virtual void OnDestroy()
@@ -66,22 +80,28 @@ namespace nsBuilding
 
         private void OnMouseEnter()
         {
-            if (_isInitialized) OnMouseEnterCustom?.Invoke(null);
+            if (_buildingState != BuildingState.Undefined) OnMouseEnterCustom?.Invoke(null);
         }
 
         private void OnMouseExit()
         {
-            if (_isInitialized) OnMouseExitCustom?.Invoke(null);
+            if (_buildingState != BuildingState.Undefined) OnMouseExitCustom?.Invoke(null);
         }
 
         public void BecomeGhost()
         {
+            _isGhost = true;
             _collider2D.isTrigger = true;
-            OnActionRangeCircleToggle?.Invoke(true);
+            ActionRangeCircleToggle(true);
             OnAntiBuildingColliderToggle?.Invoke(false);
         }
 
-        public void SetBuildingCirclesActive(bool value)
+        protected void ActionRangeCircleToggle(bool value)
+        {
+            OnActionRangeCircleToggle?.Invoke(value);
+        }
+
+        public virtual void SetBuildingCirclesActive(bool value)
         {
             OnBuildingCirclesToggle?.Invoke(value);
         }
@@ -105,6 +125,28 @@ namespace nsBuilding
                 isWithinPylonRange |= (building != null) && (building != this);
             }
             return isWithinPylonRange;
+        }
+
+        private IEnumerator StartBuilding(float delay)
+        {
+            var waitForSeconds = new WaitForSeconds(delay);
+
+            foreach (Transform buildingBlock in _buildingBlocks)
+            {
+                foreach (Transform child in buildingBlock)
+                {
+                    child.gameObject.SetActive(true);
+                    yield return waitForSeconds;
+                }
+            }
+
+            SetActive(true);
+            StartWorking();
+        }
+
+        protected virtual void StartWorking()
+        {
+            _buildingState = BuildingState.Working;
         }
     }
 }
