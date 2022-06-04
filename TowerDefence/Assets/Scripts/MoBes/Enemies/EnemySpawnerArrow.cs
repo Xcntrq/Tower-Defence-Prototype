@@ -56,7 +56,7 @@ namespace nsEnemySpawnerArrow
             _inverseLerp = 1;
             _arrowDirection *= 1200;
             if (_arrowDirection.y > 480) _inverseLerp = Mathf.InverseLerp(0, _arrowDirection.y, 480);
-            if (_arrowDirection.y < -270) _inverseLerp = Mathf.InverseLerp(0, _arrowDirection.y, -270);
+            if (_arrowDirection.y < -205) _inverseLerp = Mathf.InverseLerp(0, _arrowDirection.y, -205);
             _arrowDirection.x *= _inverseLerp;
             _arrowDirection.y *= _inverseLerp;
             _inverseLerp = 1;

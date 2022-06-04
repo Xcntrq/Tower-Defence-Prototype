@@ -37,6 +37,7 @@ namespace nsResourceCostDisplay
             {
                 RectTransform buttonRectTransform = (sender as PointerEnterExit).GetComponent<RectTransform>();
                 anchoredPosition = buttonRectTransform.anchoredPosition;
+                anchoredPosition.x += e.PanelRectTransform.anchoredPosition.x;
                 anchoredPosition.y += e.PanelRectTransform.rect.height;
                 _cachedPositions[sender] = anchoredPosition;
             }

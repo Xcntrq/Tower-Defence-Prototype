@@ -929,6 +929,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1398653698640380368, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1398653698640380368, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1398653698640380368, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1398653698640380368, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1449751490499730089, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
       propertyPath: _towerData
       value: 
@@ -997,6 +1013,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pfTowerMissile
       objectReference: {fileID: 0}
+    - target: {fileID: 4323885988058981688, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4446380658471657535, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 3.3
@@ -1020,6 +1040,14 @@ PrefabInstance:
     - target: {fileID: 8101763999729713485, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
       propertyPath: m_Size.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8610665056869281810, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 44
+      objectReference: {fileID: 0}
+    - target: {fileID: 8610665056869281810, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 9085394953118524985, guid: 2451d539a5f284c408caa1800f0b6701, type: 3}
       propertyPath: m_Size.x
