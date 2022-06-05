@@ -25,8 +25,6 @@ namespace nsTower
 
         protected override void StartWorking()
         {
-            base.StartWorking();
-
             StartCoroutine(TargetSearch(_towerData.SearchCooldown));
             StartCoroutine(Attack(_towerData.AttackCooldown));
         }
@@ -71,6 +69,16 @@ namespace nsTower
                 newProjectile.transform.position = _projectileOrigin.transform.position;
                 newProjectile.Initialize(_target);
             }
+        }
+
+        protected override string Description2()
+        {
+            string dmg = string.Concat(_projectile.Damage, " DMG");
+            string cd = string.Concat(_towerData.AttackCooldown, " CD");
+            string dps = (_projectile.Damage / _towerData.AttackCooldown).ToString();
+            dps = string.Concat(dps, " DPS");
+            string radius = string.Concat(BuildingType.ActionRadius, " Range");
+            return string.Concat("<br>", dmg, "<br>", cd, "<br>", dps, "<br>", radius);
         }
     }
 }

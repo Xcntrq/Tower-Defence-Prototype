@@ -173,7 +173,7 @@ namespace nsGhostBuilding
                     if (!_isSpaceEmpty)
                     {
                         if (_text != "") _text += "<br>";
-                        _text += "- Something is in the way, man!";
+                        _text += "- Something's in the way, man!";
                     }
                     if (!_isAffordable)
                     {
