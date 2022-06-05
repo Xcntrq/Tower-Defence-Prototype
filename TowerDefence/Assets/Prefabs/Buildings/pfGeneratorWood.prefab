@@ -6407,6 +6407,7 @@ MonoBehaviour:
   - {fileID: 4540573019335839407}
   - {fileID: 8337368550874630845}
   _resourceGeneratorData: {fileID: 11400000, guid: 84e1fb0832215854c9504471a263f0fc, type: 2}
+  _secondsInTick: {fileID: 11400000, guid: b728a40fe50e45c449b867d215404828, type: 2}
 --- !u!114 &506142635902140959
 MonoBehaviour:
   m_ObjectHideFlags: 0

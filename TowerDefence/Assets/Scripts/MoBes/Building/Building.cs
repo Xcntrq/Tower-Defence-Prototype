@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using nsResourceStorage;
 using System.Collections;
+using nsResourceCost;
 
 namespace nsBuilding
 {
@@ -35,6 +36,7 @@ namespace nsBuilding
         public int MaxHealth => _buildingType.MaxHealth;
         public BuildingType BuildingType => _buildingType;
         public ResourceStorage ResourceStorage => _resourceStorage;
+        public string Description => string.Concat(Description1(), Description2());
 
         //Building Circles
         public event Action<BuildingDistance> OnBuildingCirclesDistanceChange;
@@ -141,12 +143,27 @@ namespace nsBuilding
             }
 
             SetActive(true);
+            _buildingState = BuildingState.Working;
             StartWorking();
         }
 
-        protected virtual void StartWorking()
+        protected abstract void StartWorking();
+
+        //Name and costs
+        private string Description1()
         {
-            _buildingState = BuildingState.Working;
+            string result = string.Concat(_buildingType.Name, "<br><br>");
+            foreach (ResourceCost resourceCost in _buildingType.ResourceCosts)
+            {
+                string color = ColorUtility.ToHtmlStringRGB(resourceCost.ResourceType.Color);
+                string name = resourceCost.ResourceType.Name;
+                int cost = resourceCost.Value;
+                result = string.Concat(result, name, ": <color=#", color, '>', cost, "</color><br>");
+            }
+            return result;
         }
+
+        //Specific descriptions with range and rates
+        protected abstract string Description2();
     }
 }

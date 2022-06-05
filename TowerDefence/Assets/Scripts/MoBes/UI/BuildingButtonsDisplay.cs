@@ -13,7 +13,7 @@ namespace nsBuildingButtonsDisplay
 {
     public class MouseEnterEventArgs : EventArgs
     {
-        public BuildingType BuildingType { get; set; }
+        public string Text { get; set; }
         public RectTransform PanelRectTransform { get; set; }
     }
 
@@ -71,7 +71,7 @@ namespace nsBuildingButtonsDisplay
                 newItem.GetComponentInChildren<LayoutElement>().GetComponent<Image>().sprite = building.BuildingType.Sprite;
                 newItem.GetComponentInChildren<TextMeshProUGUI>().SetText(index++.ToString());
                 newItem.GetComponent<Button>().onClick.AddListener(() => { _buildingPlacer.CurrentBuilding = building; });
-                MouseEnterEventArgs mouseEnterEventArgs = new() { BuildingType = building.BuildingType, PanelRectTransform = GetComponent<RectTransform>() };
+                MouseEnterEventArgs mouseEnterEventArgs = new() { Text = building.Description, PanelRectTransform = GetComponent<RectTransform>() };
                 newItem.GetComponent<PointerEnterExit>().OnPointerEnterCustom += (object sender, EventArgs e) => { OnMouseEnter?.Invoke(sender, mouseEnterEventArgs); };
                 newItem.GetComponent<PointerEnterExit>().OnPointerExitCustom += (object sender, EventArgs e) => { OnMouseExit?.Invoke(); };
                 _items[building] = newItem;

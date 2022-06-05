@@ -1,3 +1,4 @@
+using nsFloatValue;
 using nsResourceGeneratorData;
 using nsResourceGeneratorDatas;
 using System;
@@ -9,7 +10,7 @@ namespace nsTimeTicker
     public class TimeTicker : MonoBehaviour
     {
         [SerializeField] private ResourceGeneratorDatas _resourceGeneratorDatas;
-        [SerializeField] private float _secondsInTick;
+        [SerializeField] private FloatValue _secondsInTick;
 
         private Dictionary<ResourceGeneratorData, int> _tickLimits;
         private Dictionary<ResourceGeneratorData, int> _currentTicks;
@@ -19,7 +20,7 @@ namespace nsTimeTicker
 
         private void Awake()
         {
-            _timeLeft = _secondsInTick;
+            _timeLeft = _secondsInTick.Value;
             _tickLimits = new Dictionary<ResourceGeneratorData, int>();
             _currentTicks = new Dictionary<ResourceGeneratorData, int>();
             foreach (ResourceGeneratorData resourceGeneratorData in _resourceGeneratorDatas.List)
@@ -34,7 +35,7 @@ namespace nsTimeTicker
             _timeLeft -= Time.deltaTime;
             if (_timeLeft <= 0)
             {
-                _timeLeft += _secondsInTick;
+                _timeLeft += _secondsInTick.Value;
                 foreach (ResourceGeneratorData resourceGeneratorData in _resourceGeneratorDatas.List)
                 {
                     _currentTicks[resourceGeneratorData] += 1;

@@ -8,12 +8,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using nsTimeTicker;
+using nsFloatValue;
 
 namespace nsResourceGenerator
 {
     public class ResourceGenerator : Building
     {
         [SerializeField] private ResourceGeneratorData _resourceGeneratorData;
+        [SerializeField] private FloatValue _secondsInTick;
 
         private NearbyResourceNodeFinder _nearbyResourceNodeFinder;
         private TimeTicker _timeTicker;
@@ -68,8 +70,6 @@ namespace nsResourceGenerator
 
         protected override void StartWorking()
         {
-            base.StartWorking();
-
             FindNearbyResourceNodes();
             if (_nearbyResourceNodeCount > 0) OnGetToWork?.Invoke(_nearbyResourceNodeCount);
         }
@@ -82,6 +82,11 @@ namespace nsResourceGenerator
             string text = string.Concat('+', _totalAmountPerCycle, ' ', '(', _nearbyResourceNodeCount, ')');
             OnOverlapCircleAll?.Invoke(text);
             return desiredNearbyResourceNodes;
+        }
+
+        protected override string Description2()
+        {
+            return string.Concat("<br>Gives ", _resourceGeneratorData.AmountPerCycle, ' ', _resourceGeneratorData.ResourceType.Name, " every ", _resourceGeneratorData.TicksInCycle * _secondsInTick.Value, " sec<br>for each node within range ", BuildingType.ActionRadius);
         }
     }
 }
