@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: WraithData
   m_EditorClassIdentifier: 
   _maxHealth: 50
-  _damage: 15
-  _speed: 1
+  _damage: 1111
+  _speed: 8
   _detectionRadius: 8

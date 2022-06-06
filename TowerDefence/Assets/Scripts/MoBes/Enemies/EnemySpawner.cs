@@ -40,10 +40,12 @@ namespace nsEnemySpawner
         public List<SpawnPosition> SpawnPositions => _spawnPositions;
 
         public event Action<string> OnTextChange;
+        public event Action<int> OnWaveNumberChange;
         public event Action<Transform> OnSpawnPositionChange;
 
-        private void Start()
+        private void Awake()
         {
+            _buildingPlacer.OnGameOver += BuildingPlacer_OnGameOver;
             _randomPosition = _seed.Value == 0 ? new System.Random() : new System.Random(_seed.Value);
             _randomLength = new System.Random();
             _spawnedEnemies = new List<Enemy>();
@@ -93,6 +95,7 @@ namespace nsEnemySpawner
                     if (_spawnedEnemies.Count == 0)
                     {
                         _waveNumber++;
+                        OnWaveNumberChange?.Invoke(_waveNumber);
                         _nextSpawnPositionIndex = _randomPosition.Next(_spawnPositions.Count);
                         _spawnPositions[_nextSpawnPositionIndex].gameObject.SetActive(true);
                         OnSpawnPositionChange?.Invoke(_spawnPositions[_nextSpawnPositionIndex].transform);
@@ -101,6 +104,12 @@ namespace nsEnemySpawner
                     }
                     break;
             }
+        }
+
+        private void BuildingPlacer_OnGameOver()
+        {
+            OnTextChange?.Invoke("");
+            Destroy(gameObject);
         }
 
         public void ForgetEnemy(Enemy enemy)
