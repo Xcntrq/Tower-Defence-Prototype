@@ -43,6 +43,7 @@ namespace nsBuildingPlacer
         }
 
         public event Action<Building> OnCurrentBuildingChange;
+        public event Action OnGameOver;
 
         private void Awake()
         {
@@ -84,6 +85,10 @@ namespace nsBuildingPlacer
         public void ForgetBuilding(Building building)
         {
             PlacedBuildings.Remove(building);
+            if (PlacedBuildings.Count != 0) return;
+            CurrentBuilding = null;
+            OnGameOver?.Invoke();
+            Destroy(gameObject);
         }
 
         public void SetBuildingCirclesActiveAll(bool value)
