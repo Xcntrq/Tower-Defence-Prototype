@@ -105,7 +105,7 @@ namespace nsGhostBuilding
             }
 
             _buildingPlacer.OnCurrentBuildingChange += BuildingPlacer_OnCurrentBuildingChange;
-            _buildingPlacer.OnGameOver += BuildingPlacer_OnGameOver; ;
+            _buildingPlacer.OnGameOver += BuildingPlacer_OnGameOver;
         }
 
         private void Start()
@@ -195,6 +195,12 @@ namespace nsGhostBuilding
                     OnBuildOrderError?.Invoke(_text, _tooltipDelay);
                 }
             }
+        }
+
+        private void OnDestroy()
+        {
+            _buildingPlacer.OnCurrentBuildingChange -= BuildingPlacer_OnCurrentBuildingChange;
+            _buildingPlacer.OnGameOver -= BuildingPlacer_OnGameOver;
         }
     }
 }
