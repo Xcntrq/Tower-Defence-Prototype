@@ -18,6 +18,11 @@ namespace nsGameOverDisplay
             gameObject.SetActive(false);
         }
 
+        private void OnDestroy()
+        {
+            _buildingPlacer.OnGameOver -= BuildingPlacer_OnGameOver;
+        }
+
         private void BuildingPlacer_OnGameOver()
         {
             gameObject.SetActive(true);

@@ -18,10 +18,12 @@ namespace nsEnemySpawner
 
     public class EnemySpawner : MonoBehaviour
     {
-        [SerializeField] private List<SpawnPosition> _spawnPositions;
         [SerializeField] private BuildingPlacer _buildingPlacer;
         [SerializeField] private IntValue _seed;
         [SerializeField] private Enemy _enemy;
+        [SerializeField] private SpawnPosition _spawnPosition;
+        [SerializeField] private int _spawnPositionsCount;
+        [SerializeField] private float _spawnPositionsDistance;
         [SerializeField] private float _spawnRadius;
         [SerializeField] private float _cooldownTime;
         [SerializeField] private float _spawnInterval;
@@ -29,6 +31,7 @@ namespace nsEnemySpawner
         private SpawnerState _spawnerState;
         private System.Random _randomPosition;
         private System.Random _randomLength;
+        private List<SpawnPosition> _spawnPositions;
         private List<Enemy> _spawnedEnemies;
         private int _nextSpawnPositionIndex;
         private float _timeLeft;
@@ -51,6 +54,17 @@ namespace nsEnemySpawner
             _spawnedEnemies = new List<Enemy>();
             _direction = new Direction();
             _waveNumber = 0;
+            _spawnPositions = new List<SpawnPosition>();
+            float averageAngle = 360f / _spawnPositionsCount;
+            for (int i = 0; i < _spawnPositionsCount; i++)
+            {
+                float currentAngle = averageAngle * (i + 0.5f);
+                Quaternion rotation = Quaternion.Euler(0, 0, currentAngle);
+                Vector3 position = Vector3.up * _spawnPositionsDistance;
+                position = rotation * position;
+                SpawnPosition newSpawnPosition = Instantiate(_spawnPosition, position, Quaternion.identity, transform);
+                _spawnPositions.Add(newSpawnPosition);
+            }
             _spawnerState = SpawnerState.Attacking;
         }
 
@@ -104,6 +118,11 @@ namespace nsEnemySpawner
                     }
                     break;
             }
+        }
+
+        private void OnDestroy()
+        {
+            _buildingPlacer.OnGameOver -= BuildingPlacer_OnGameOver;
         }
 
         private void BuildingPlacer_OnGameOver()
