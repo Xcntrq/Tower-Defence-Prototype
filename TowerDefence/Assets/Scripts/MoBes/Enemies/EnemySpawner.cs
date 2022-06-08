@@ -25,6 +25,7 @@ namespace nsEnemySpawner
         [SerializeField] private int _spawnPositionsCount;
         [SerializeField] private float _spawnPositionsDistance;
         [SerializeField] private float _spawnRadius;
+        [SerializeField] private float _firstCooldownTime;
         [SerializeField] private float _cooldownTime;
         [SerializeField] private float _spawnInterval;
 
@@ -78,7 +79,7 @@ namespace nsEnemySpawner
                     _timeLeft -= Time.deltaTime;
                     if (_timeLeft <= 0)
                     {
-                        _spawnsRemaining = _waveNumber;
+                        _spawnsRemaining = _waveNumber * 2;
                         _text = string.Concat("Wave #", _waveNumber, " spawning...");
                         OnTextChange?.Invoke(_text);
                         _spawnerState = SpawnerState.Spawning;
@@ -113,7 +114,7 @@ namespace nsEnemySpawner
                         _nextSpawnPositionIndex = _randomPosition.Next(_spawnPositions.Count);
                         _spawnPositions[_nextSpawnPositionIndex].gameObject.SetActive(true);
                         OnSpawnPositionChange?.Invoke(_spawnPositions[_nextSpawnPositionIndex].transform);
-                        _timeLeft = _cooldownTime;
+                        _timeLeft = _waveNumber == 1 ? _firstCooldownTime : _cooldownTime;
                         _spawnerState = SpawnerState.Cooldown;
                     }
                     break;

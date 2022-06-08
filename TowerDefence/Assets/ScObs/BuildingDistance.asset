@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2482510ae4ddcb49932ccc5d23b5faf, type: 3}
   m_Name: BuildingDistance
   m_EditorClassIdentifier: 
-  _min: 4
-  _max: 12
+  _min: 5
+  _max: 10
