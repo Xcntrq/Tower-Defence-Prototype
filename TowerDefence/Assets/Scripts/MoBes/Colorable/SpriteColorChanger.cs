@@ -12,14 +12,24 @@ namespace nsSpriteColorChanger
         private Color _defaultColor;
         private bool _isColorCached;
 
-        private void OnEnable()
+        private void Awake()
         {
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+            _defaultColor = Color.white;
+            _isColorCached = false;
             _colorable.OnColorChange += Colorable_OnApplyColor;
+            _colorable.OnSetActive += Colorable_OnSetActive;
         }
 
-        private void OnDisable()
+        private void Start()
         {
-            _colorable.OnColorChange -= Colorable_OnApplyColor;
+            //Can't cache the color on Awake because it may be randomized in a different component's Awake
+            CacheColor();
+        }
+
+        private void Colorable_OnSetActive(bool value)
+        {
+            gameObject.SetActive(value);
         }
 
         private void Colorable_OnApplyColor(ColorValue colorValue)
@@ -33,19 +43,6 @@ namespace nsSpriteColorChanger
             {
                 _spriteRenderer.color = _defaultColor;
             }
-        }
-
-        private void Awake()
-        {
-            _spriteRenderer = GetComponent<SpriteRenderer>();
-            _defaultColor = Color.white;
-            _isColorCached = false;
-        }
-
-        private void Start()
-        {
-            //Can't cache the color on Awake because it may be randomized in a different component's Awake
-            CacheColor();
         }
 
         private void CacheColor()

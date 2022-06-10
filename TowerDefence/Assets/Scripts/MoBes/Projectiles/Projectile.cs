@@ -16,6 +16,8 @@ namespace nsProjectile
         private Vector3 _rotation;
         private bool _isInitialized;
 
+        public int Damage => _projectileData.Damage;
+
         public void Initialize(Transform target)
         {
             _target = target;

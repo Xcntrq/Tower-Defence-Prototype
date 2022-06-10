@@ -78,6 +78,12 @@ namespace nsGhostBuilding
             }
         }
 
+        private void BuildingPlacer_OnGameOver()
+        {
+            BuildingPlacer_OnCurrentBuildingChange(null);
+            Destroy(gameObject);
+        }
+
         private void Awake()
         {
             _buildingGhosts = new Dictionary<Building, Building>();
@@ -99,6 +105,7 @@ namespace nsGhostBuilding
             }
 
             _buildingPlacer.OnCurrentBuildingChange += BuildingPlacer_OnCurrentBuildingChange;
+            _buildingPlacer.OnGameOver += BuildingPlacer_OnGameOver;
         }
 
         private void Start()
@@ -173,7 +180,7 @@ namespace nsGhostBuilding
                     if (!_isSpaceEmpty)
                     {
                         if (_text != "") _text += "<br>";
-                        _text += "- Something is in the way, man!";
+                        _text += "- Something's in the way, man!";
                     }
                     if (!_isAffordable)
                     {
@@ -188,6 +195,12 @@ namespace nsGhostBuilding
                     OnBuildOrderError?.Invoke(_text, _tooltipDelay);
                 }
             }
+        }
+
+        private void OnDestroy()
+        {
+            _buildingPlacer.OnCurrentBuildingChange -= BuildingPlacer_OnCurrentBuildingChange;
+            _buildingPlacer.OnGameOver -= BuildingPlacer_OnGameOver;
         }
     }
 }

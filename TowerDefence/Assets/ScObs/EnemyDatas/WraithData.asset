@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxHealth: 50
   _damage: 15
-  _speed: 12
-  _detectionRadius: 8
+  _speed: 1.5
+  _detectionRadius: 12

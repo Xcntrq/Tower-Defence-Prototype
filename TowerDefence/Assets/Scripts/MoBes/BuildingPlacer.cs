@@ -2,6 +2,7 @@ using nsBuilding;
 using nsBuildings;
 using nsResourceGenerator;
 using nsResourceStorage;
+using nsTimeTicker;
 using nsTower;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace nsBuildingPlacer
     {
         [SerializeField] private Buildings _buildings;
         [SerializeField] private ResourceStorage _resourceStorage;
+        [SerializeField] private TimeTicker _timeTicker;
 
         private HashSet<Building> _placedBuildings;
         private Building _currentBuilding;
@@ -41,6 +43,7 @@ namespace nsBuildingPlacer
         }
 
         public event Action<Building> OnCurrentBuildingChange;
+        public event Action OnGameOver;
 
         private void Awake()
         {
@@ -73,8 +76,8 @@ namespace nsBuildingPlacer
         {
             if (CurrentBuilding == null) return;
             Building building = Instantiate(CurrentBuilding, position, Quaternion.identity, transform);
-            if (building is ResourceGenerator) (building as ResourceGenerator).Initialize(this, _resourceStorage);
-            if (building is Tower) building.Initialize(this);
+            if (building is ResourceGenerator) (building as ResourceGenerator).Initialize(this, _resourceStorage, _timeTicker);
+            if (building is Tower) building.Initialize(this, _resourceStorage);
             PlacedBuildings.Add(building);
             SetBuildingCirclesActiveAll(_areBuildingCirclesActive);
         }
@@ -82,6 +85,10 @@ namespace nsBuildingPlacer
         public void ForgetBuilding(Building building)
         {
             PlacedBuildings.Remove(building);
+            if (PlacedBuildings.Count != 0) return;
+            CurrentBuilding = null;
+            OnGameOver?.Invoke();
+            Destroy(gameObject);
         }
 
         public void SetBuildingCirclesActiveAll(bool value)

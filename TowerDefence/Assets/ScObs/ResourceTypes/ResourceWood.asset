@@ -15,4 +15,4 @@ MonoBehaviour:
   _name: Wood
   _sprite: {fileID: 21300000, guid: 3ab02e4e0f6fdb74f87fa4f1098759e5, type: 3}
   _color: {fileID: 11400000, guid: 7e0aa16b717b87e4abc3ee43f033aa45, type: 2}
-  _amountAtStart: 300
+  _amountAtStart: 200

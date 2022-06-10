@@ -4,9 +4,11 @@ namespace nsSpawnPosition
 {
     public class SpawnPosition : MonoBehaviour
     {
+        [SerializeField] private bool _startActive;
+
         private void Awake()
         {
-            gameObject.SetActive(false);
+            gameObject.SetActive(_startActive);
         }
     }
 }

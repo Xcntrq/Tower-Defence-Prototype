@@ -17,8 +17,7 @@ MonoBehaviour:
   _keyCode: 50
   _maxHealth: 100
   _actionRadius: 4
-  _resourceGenerator: {fileID: 8616325229268131667, guid: 4f9da2db84e3af04185501f6b1751226, type: 3}
-  _resourceGeneratorData: {fileID: 0}
+  _buildingTimerDelay: 0.2
   _resourceCosts:
   - _resourceType: {fileID: 11400000, guid: dc1f9caca0c54e548802e7666787e39c, type: 2}
     _value: 400

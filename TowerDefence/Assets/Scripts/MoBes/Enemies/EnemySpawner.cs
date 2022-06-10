@@ -18,17 +18,21 @@ namespace nsEnemySpawner
 
     public class EnemySpawner : MonoBehaviour
     {
-        [SerializeField] private List<SpawnPosition> _spawnPositions;
         [SerializeField] private BuildingPlacer _buildingPlacer;
         [SerializeField] private IntValue _seed;
         [SerializeField] private Enemy _enemy;
+        [SerializeField] private SpawnPosition _spawnPosition;
+        [SerializeField] private int _spawnPositionsCount;
+        [SerializeField] private float _spawnPositionsDistance;
         [SerializeField] private float _spawnRadius;
+        [SerializeField] private float _firstCooldownTime;
         [SerializeField] private float _cooldownTime;
         [SerializeField] private float _spawnInterval;
 
         private SpawnerState _spawnerState;
         private System.Random _randomPosition;
         private System.Random _randomLength;
+        private List<SpawnPosition> _spawnPositions;
         private List<Enemy> _spawnedEnemies;
         private int _nextSpawnPositionIndex;
         private float _timeLeft;
@@ -40,15 +44,28 @@ namespace nsEnemySpawner
         public List<SpawnPosition> SpawnPositions => _spawnPositions;
 
         public event Action<string> OnTextChange;
+        public event Action<int> OnWaveNumberChange;
         public event Action<Transform> OnSpawnPositionChange;
 
-        private void Start()
+        private void Awake()
         {
+            _buildingPlacer.OnGameOver += BuildingPlacer_OnGameOver;
             _randomPosition = _seed.Value == 0 ? new System.Random() : new System.Random(_seed.Value);
             _randomLength = new System.Random();
             _spawnedEnemies = new List<Enemy>();
             _direction = new Direction();
             _waveNumber = 0;
+            _spawnPositions = new List<SpawnPosition>();
+            float averageAngle = 360f / _spawnPositionsCount;
+            for (int i = 0; i < _spawnPositionsCount; i++)
+            {
+                float currentAngle = averageAngle * (i + 0.5f);
+                Quaternion rotation = Quaternion.Euler(0, 0, currentAngle);
+                Vector3 position = Vector3.up * _spawnPositionsDistance;
+                position = rotation * position;
+                SpawnPosition newSpawnPosition = Instantiate(_spawnPosition, position, Quaternion.identity, transform);
+                _spawnPositions.Add(newSpawnPosition);
+            }
             _spawnerState = SpawnerState.Attacking;
         }
 
@@ -62,7 +79,7 @@ namespace nsEnemySpawner
                     _timeLeft -= Time.deltaTime;
                     if (_timeLeft <= 0)
                     {
-                        _spawnsRemaining = _waveNumber;
+                        _spawnsRemaining = _waveNumber * 2;
                         _text = string.Concat("Wave #", _waveNumber, " spawning...");
                         OnTextChange?.Invoke(_text);
                         _spawnerState = SpawnerState.Spawning;
@@ -93,14 +110,26 @@ namespace nsEnemySpawner
                     if (_spawnedEnemies.Count == 0)
                     {
                         _waveNumber++;
+                        OnWaveNumberChange?.Invoke(_waveNumber);
                         _nextSpawnPositionIndex = _randomPosition.Next(_spawnPositions.Count);
                         _spawnPositions[_nextSpawnPositionIndex].gameObject.SetActive(true);
                         OnSpawnPositionChange?.Invoke(_spawnPositions[_nextSpawnPositionIndex].transform);
-                        _timeLeft = _cooldownTime;
+                        _timeLeft = _waveNumber == 1 ? _firstCooldownTime : _cooldownTime;
                         _spawnerState = SpawnerState.Cooldown;
                     }
                     break;
             }
+        }
+
+        private void OnDestroy()
+        {
+            _buildingPlacer.OnGameOver -= BuildingPlacer_OnGameOver;
+        }
+
+        private void BuildingPlacer_OnGameOver()
+        {
+            OnTextChange?.Invoke("");
+            Destroy(gameObject);
         }
 
         public void ForgetEnemy(Enemy enemy)

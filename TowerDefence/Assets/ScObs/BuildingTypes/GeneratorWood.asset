@@ -15,8 +15,9 @@ MonoBehaviour:
   _name: Lumberjack
   _sprite: {fileID: 21300000, guid: bfadcc08738a00b449e6f8ade164cd78, type: 3}
   _keyCode: 49
-  _maxHealth: 10000
-  _actionRadius: 6
+  _maxHealth: 100
+  _actionRadius: 7
+  _buildingTimerDelay: 0.1
   _resourceCosts:
   - _resourceType: {fileID: 11400000, guid: dc1f9caca0c54e548802e7666787e39c, type: 2}
     _value: 150

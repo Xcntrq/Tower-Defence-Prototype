@@ -6,20 +6,37 @@ using System;
 using UnityEngine;
 using nsBuildingPlacer;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
+using nsResourceStorage;
+using System.Collections;
+using nsResourceCost;
 
 namespace nsBuilding
 {
+    public enum BuildingState
+    {
+        Undefined,
+        Building,
+        Working
+    }
+
     public abstract class Building : Colorable, IHealthCarrier
     {
         [SerializeField] private BuildingDistance _buildingDistance;
         [SerializeField] private BuildingType _buildingType;
+        [SerializeField] private List<Transform> _buildingBlocks;
 
+        protected BuildingState _buildingState;
+        private bool _isGhost;
+
+        protected ResourceStorage _resourceStorage;
         private BuildingPlacer _buildingPlacer;
         private Collider2D _collider2D;
-        protected bool _isInitialized;
 
         public int MaxHealth => _buildingType.MaxHealth;
         public BuildingType BuildingType => _buildingType;
+        public ResourceStorage ResourceStorage => _resourceStorage;
+        public string Description => string.Concat(Description1(), Description2());
 
         //Building Circles
         public event Action<BuildingDistance> OnBuildingCirclesDistanceChange;
@@ -32,37 +49,61 @@ namespace nsBuilding
         //Anti-Building Collider
         public event Action<bool> OnAntiBuildingColliderToggle;
 
-        public void Initialize(BuildingPlacer buildingPlacer)
+        //Deconstruct Button
+        public event Action<PointerEventData> OnMouseEnterCustom;
+        public event Action<PointerEventData> OnMouseExitCustom;
+
+        public void Initialize(BuildingPlacer buildingPlacer, ResourceStorage resourceStorage)
         {
+            _isGhost = false;
+            _resourceStorage = resourceStorage;
             _buildingPlacer = buildingPlacer;
-            _isInitialized = true;
+            _buildingState = BuildingState.Building;
+            StartCoroutine(StartBuilding(_buildingType.BuildingTimerDelay));
         }
 
         protected virtual void Awake()
         {
             _collider2D = GetComponent<Collider2D>();
-            _isInitialized = false;
+            _buildingState = BuildingState.Undefined;
         }
 
         protected virtual void Start()
         {
             OnBuildingCirclesDistanceChange?.Invoke(_buildingDistance);
             OnActionRadiusChange?.Invoke(_buildingType.ActionRadius);
+            SetActive(_isGhost);
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if (_buildingPlacer != null) _buildingPlacer.ForgetBuilding(this);
         }
 
+        private void OnMouseEnter()
+        {
+            if (_buildingState != BuildingState.Undefined) OnMouseEnterCustom?.Invoke(null);
+        }
+
+        private void OnMouseExit()
+        {
+            if (_buildingState != BuildingState.Undefined) OnMouseExitCustom?.Invoke(null);
+        }
+
         public void BecomeGhost()
         {
+            _isGhost = true;
             _collider2D.isTrigger = true;
-            OnActionRangeCircleToggle?.Invoke(true);
+            ActionRangeCircleToggle(true);
             OnAntiBuildingColliderToggle?.Invoke(false);
         }
 
-        public void SetBuildingCirclesActive(bool value)
+        protected void ActionRangeCircleToggle(bool value)
+        {
+            OnActionRangeCircleToggle?.Invoke(value);
+        }
+
+        public virtual void SetBuildingCirclesActive(bool value)
         {
             OnBuildingCirclesToggle?.Invoke(value);
         }
@@ -79,7 +120,7 @@ namespace nsBuilding
         {
             bool isWithinPylonRange = false;
             Vector2 point = (Vector2)transform.position + _collider2D.offset;
-            Collider2D[] allOverlappingColliders = Physics2D.OverlapCircleAll(point, _buildingDistance.Max);
+            Collider2D[] allOverlappingColliders = Physics2D.OverlapCircleAll(point, _buildingDistance.Max - 1);
             foreach (Collider2D collider in allOverlappingColliders)
             {
                 Building building = collider.GetComponent<Building>();
@@ -87,5 +128,42 @@ namespace nsBuilding
             }
             return isWithinPylonRange;
         }
+
+        private IEnumerator StartBuilding(float delay)
+        {
+            var waitForSeconds = new WaitForSeconds(delay);
+
+            foreach (Transform buildingBlock in _buildingBlocks)
+            {
+                foreach (Transform child in buildingBlock)
+                {
+                    child.gameObject.SetActive(true);
+                    yield return waitForSeconds;
+                }
+            }
+
+            SetActive(true);
+            _buildingState = BuildingState.Working;
+            StartWorking();
+        }
+
+        protected abstract void StartWorking();
+
+        //Name and costs
+        private string Description1()
+        {
+            string result = string.Concat(_buildingType.Name, "<br><br>");
+            foreach (ResourceCost resourceCost in _buildingType.ResourceCosts)
+            {
+                string color = ColorUtility.ToHtmlStringRGB(resourceCost.ResourceType.Color);
+                string name = resourceCost.ResourceType.Name;
+                int cost = resourceCost.Value;
+                result = string.Concat(result, name, ": <color=#", color, '>', cost, "</color><br>");
+            }
+            return result;
+        }
+
+        //Specific descriptions with range and rates
+        protected abstract string Description2();
     }
 }

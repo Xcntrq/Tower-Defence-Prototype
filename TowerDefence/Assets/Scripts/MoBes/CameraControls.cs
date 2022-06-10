@@ -14,6 +14,7 @@ namespace nsCameraControls
         [SerializeField] private float _minOrthoSize;
         [SerializeField] private float _defaultOrthoSize;
         [SerializeField] private float _maxOrthoSize;
+        [SerializeField] private float _movementLimits;
 
         private MousePositionHelper _mousePositionHelper;
         private Vector3 _memorizedPosition;
@@ -45,7 +46,11 @@ namespace nsCameraControls
                 Vector3 direction = new(x, y, z);
                 direction.Normalize();
                 transform.position += _movementSpeed * Time.deltaTime * direction;
-                _desiredPosition += _movementSpeed * Time.deltaTime * direction;
+                Vector3 position = transform.position;
+                position.x = Mathf.Clamp(position.x, -_movementLimits, _movementLimits);
+                position.y = Mathf.Clamp(position.y, -_movementLimits, _movementLimits);
+                transform.position = position;
+                _desiredPosition = position;
             }
 
             //Zoom

@@ -1,32 +1,27 @@
 using nsBuildingButtonsDisplay;
-using nsColorValue;
-using nsMouseEnterExit;
+using nsPointerEnterExit;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace nsResourceCostDisplay
 {
     public class ResourceCostDisplay : MonoBehaviour
     {
         [SerializeField] private BuildingButtonsDisplay _buildingButtonsDisplay;
-        [SerializeField] private ColorValue _transparentColor;
 
         private Dictionary<object, Vector2> _cachedPositions;
         private RectTransform _rectTransform;
-        private Image _image;
-        private Color _defaultColor;
+        private TextMeshProUGUI _text;
 
-        private void OnEnable()
+        private void Awake()
         {
+            _cachedPositions = new Dictionary<object, Vector2>();
+            _rectTransform = GetComponent<RectTransform>();
+            _text = GetComponentInChildren<TextMeshProUGUI>();
             _buildingButtonsDisplay.OnMouseEnter += BuildingButtonsDisplay_OnMouseEnter;
             _buildingButtonsDisplay.OnMouseExit += BuildingButtonsDisplay_OnMouseExit;
-        }
-
-        private void OnDisable()
-        {
-            _buildingButtonsDisplay.OnMouseEnter -= BuildingButtonsDisplay_OnMouseEnter;
-            _buildingButtonsDisplay.OnMouseExit -= BuildingButtonsDisplay_OnMouseExit;
+            gameObject.SetActive(false);
         }
 
         private void BuildingButtonsDisplay_OnMouseEnter(object sender, MouseEnterEventArgs e)
@@ -35,8 +30,9 @@ namespace nsResourceCostDisplay
             bool isCached = _cachedPositions.ContainsKey(sender);
             if (!isCached)
             {
-                RectTransform buttonRectTransform = (sender as MouseEnterExit).GetComponent<RectTransform>();
+                RectTransform buttonRectTransform = (sender as PointerEnterExit).GetComponent<RectTransform>();
                 anchoredPosition = buttonRectTransform.anchoredPosition;
+                anchoredPosition.x += e.PanelRectTransform.anchoredPosition.x;
                 anchoredPosition.y += e.PanelRectTransform.rect.height;
                 _cachedPositions[sender] = anchoredPosition;
             }
@@ -45,21 +41,13 @@ namespace nsResourceCostDisplay
                 anchoredPosition = _cachedPositions[sender];
             }
             _rectTransform.anchoredPosition = anchoredPosition;
-            _image.color = _defaultColor;
+            _text.SetText(e.Text);
+            gameObject.SetActive(true);
         }
 
         private void BuildingButtonsDisplay_OnMouseExit()
         {
-            _image.color = _transparentColor.Value;
-        }
-
-        private void Awake()
-        {
-            _cachedPositions = new Dictionary<object, Vector2>();
-            _rectTransform = GetComponent<RectTransform>();
-            _image = GetComponent<Image>();
-            _defaultColor = _image.color;
-            _image.color = _transparentColor.Value;
+            gameObject.SetActive(false);
         }
     }
 }
