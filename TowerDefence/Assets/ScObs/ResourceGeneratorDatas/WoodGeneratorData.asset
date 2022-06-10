@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: WoodGeneratorData
   m_EditorClassIdentifier: 
   _ticksInCycle: 7
-  _amountPerCycle: 40
+  _amountPerCycle: 5
   _resourceType: {fileID: 11400000, guid: dc1f9caca0c54e548802e7666787e39c, type: 2}

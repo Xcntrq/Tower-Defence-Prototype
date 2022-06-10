@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: GoldGeneratorData
   m_EditorClassIdentifier: 
   _ticksInCycle: 13
-  _amountPerCycle: 10
+  _amountPerCycle: 20
   _resourceType: {fileID: 11400000, guid: 03c70fa4f5eeff741aefe6985ae5a04b, type: 2}

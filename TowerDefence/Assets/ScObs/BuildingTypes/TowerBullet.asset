@@ -20,4 +20,6 @@ MonoBehaviour:
   _buildingTimerDelay: 1
   _resourceCosts:
   - _resourceType: {fileID: 11400000, guid: dc1f9caca0c54e548802e7666787e39c, type: 2}
-    _value: 50
+    _value: 200
+  - _resourceType: {fileID: 11400000, guid: 788020552458df24a8ce9adc53a75f43, type: 2}
+    _value: 300

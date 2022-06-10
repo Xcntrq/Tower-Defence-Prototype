@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d2b43e7ee4560f41bc1cefd61d8600d, type: 3}
   m_Name: SecondsInTick
   m_EditorClassIdentifier: 
-  _value: 1
+  _value: 2
