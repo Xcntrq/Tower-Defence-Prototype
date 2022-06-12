@@ -151,7 +151,7 @@ namespace nsGhostBuilding
             }
             foreach (Colorable colorable in _cachedColorables)
             {
-                colorable.ChangeColor(null);
+                if (colorable != null) colorable.ChangeColor(null);
             }
             _cachedColorables = _resourceNodes;
             _cachedColorables.UnionWith(_colorableColliders);
